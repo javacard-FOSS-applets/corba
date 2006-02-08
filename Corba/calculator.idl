@@ -1,0 +1,10 @@
+module calculator {
+	exception InvalidOperator{string message;};
+	exception StackOverFlow{string message;};
+
+	interface AppletCalculator{
+		short result(in char operator) raises (InvalidOperator);
+		void addNumber(in short number) raises (StackOverFlow);
+		void clear();
+	};
+};
