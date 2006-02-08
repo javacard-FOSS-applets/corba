@@ -103,7 +103,6 @@ class CalcGUI{
 		window.setTitle("Calculator");
 		window.setResizable(false);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setVisible(true);
 	}
 	
 	
@@ -151,5 +150,8 @@ class CalcGUI{
 				JOptionPane.showMessageDialog(window, "Stack overflow", "Applet error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+	public void show() {
+		window.setVisible(true);		
 	};
 }

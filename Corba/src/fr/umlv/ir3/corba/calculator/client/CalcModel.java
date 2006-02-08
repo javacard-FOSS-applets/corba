@@ -1,6 +1,8 @@
 package fr.umlv.ir3.corba.calculator.client;
 
 import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.ORBPackage.InvalidName;
@@ -28,9 +30,10 @@ public class CalcModel {
 	 * @throws CannotProceed 
 	 * @throws NotFound */
 	public CalcModel() throws InvalidName, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed  {
-		String host = "localhost";
-		String port = "1234";
-		String nameObject   = "calculator";
+		ResourceBundle config = PropertyResourceBundle.getBundle("Config");
+		String host = config.getString("host");
+		String port = config.getString("port");
+		String nameObject = config.getString("id");
 		
 		Properties props = new Properties();
 		props.put("org.omg.CORBA.ORBInitialHost",host);

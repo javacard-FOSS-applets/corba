@@ -8,6 +8,7 @@ class Main {
 		try {
 			CalcModel model = new CalcModel();
 			CalcGUI window = new CalcGUI(model);
+			window.show();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), "Corba error", JOptionPane.ERROR_MESSAGE);
 		}
