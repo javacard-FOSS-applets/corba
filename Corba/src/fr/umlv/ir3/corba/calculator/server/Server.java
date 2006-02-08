@@ -1,6 +1,8 @@
 package fr.umlv.ir3.corba.calculator.server;
 
 import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.ORBPackage.InvalidName;
@@ -20,15 +22,17 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 import fr.umlv.ir3.corba.calculator.impl.CalculatorImpl;
 
 public class Server{
+	private ORB orb;
 	public Server() throws InvalidName, ServantAlreadyActive, WrongPolicy, org.omg.CosNaming.NamingContextPackage.InvalidName, ObjectNotActive, NotFound, CannotProceed, AdapterInactive {
-		String host = "localhost";
-		String port = "1234";
-		String nameObject   = "calculator";
+		ResourceBundle config = PropertyResourceBundle.getBundle("Config");
+		String host = config.getString("host");
+		String port = config.getString("port");
+		String nameObject = config.getString("id");
 		
 		Properties props = new Properties();
 		props.put("org.omg.CORBA.ORBInitialHost",host);
 		props.put("org.omg.CORBA.ORBInitialPort",port);
-		ORB orb = ORB.init(new String[1],props);
+		orb = ORB.init(new String[1],props);
 		org.omg.CORBA.Object o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
 		
@@ -44,8 +48,11 @@ public class Server{
 			context.rebind(name,ref);
 		}
 		root.the_POAManager().activate();
+	}
+
+	public void start() {
 		System.out.println("Server Running");
 		orb.run();
-		System.out.println("Server stopped");
+		System.out.println("Server stopped");		
 	}        
 }
