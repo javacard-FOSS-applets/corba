@@ -1,4 +1,4 @@
-package fr.umlv.ir3.corba.calculator.applet;
+package opencard.cflex.util;
 
 public class Util {
 
