@@ -18,8 +18,8 @@ public class Generator {
 		return false;
 	} 
 
-	public void setInterface(String fullPath) throws ClassNotFoundException {
-		this.file = this.getClass().getClassLoader().loadClass(fullPath);
+	public void setInterface(String name) throws ClassNotFoundException {
+		this.file = Class.forName(name);
 	}
 	
 	public String getError() {

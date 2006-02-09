@@ -4,6 +4,10 @@ import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import opencard.core.service.CardServiceException;
+import opencard.core.terminal.CardTerminalException;
+import opencard.core.util.OpenCardPropertyLoadingException;
+
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NameComponent;
@@ -23,7 +27,7 @@ import fr.umlv.ir3.corba.calculator.impl.CalculatorImpl;
 
 public class Server{
 	private ORB orb;
-	public Server() throws InvalidName, ServantAlreadyActive, WrongPolicy, org.omg.CosNaming.NamingContextPackage.InvalidName, ObjectNotActive, NotFound, CannotProceed, AdapterInactive {
+	public Server() throws InvalidName, ServantAlreadyActive, WrongPolicy, org.omg.CosNaming.NamingContextPackage.InvalidName, ObjectNotActive, NotFound, CannotProceed, AdapterInactive, ClassNotFoundException, OpenCardPropertyLoadingException, CardServiceException, CardTerminalException {
 		ResourceBundle config = PropertyResourceBundle.getBundle("config");
 		String host = config.getString("host");
 		String port = config.getString("port");
@@ -37,7 +41,9 @@ public class Server{
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
 		
 		POA root =  POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-		CalculatorImpl calculator = new CalculatorImpl();
+		
+		CalculatorImpl calculator;
+		calculator = new CalculatorImpl("A00000000101");
 		byte [] id = root.activate_object(calculator);
 		org.omg.CORBA.Object ref = root.id_to_reference(id);
 		

@@ -7,7 +7,7 @@
 	<property name="generated" value="generated" />
 	<property name="idl.dir" value="." />
 	<property name="idl.file" value="calculator.idl" />
-	<property name="idl.exec" value="C:\Program Files\J2EE\jdk\bin\idlj" />
+	<property name="idl.exec" value="/home/seb/workspace/Appet/lib" />
 	<property name="idl.module" value="calculator" />
 	<property name="idl.package" value="fr.umlv.ir3.corba" />
 	
