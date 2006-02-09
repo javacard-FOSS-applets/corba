@@ -6,11 +6,17 @@ package fr.umlv.ir3.corba.calculator.client;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
-import opencard.core.service.*;
-import opencard.core.terminal.*;
-import opencard.core.util.*;
-import opencard.opt.terminal.ISOCommandAPDU;
 import opencard.cflex.service.CFlex32CardService;
+import opencard.core.service.CardRequest;
+import opencard.core.service.CardServiceException;
+import opencard.core.service.SmartCard;
+import opencard.core.terminal.CardTerminal;
+import opencard.core.terminal.CardTerminalException;
+import opencard.core.terminal.CardTerminalRegistry;
+import opencard.core.terminal.ResponseAPDU;
+import opencard.core.util.HexString;
+import opencard.core.util.OpenCardPropertyLoadingException;
+import opencard.opt.terminal.ISOCommandAPDU;
 
 public class RPNClient {
 
@@ -52,16 +58,18 @@ public class RPNClient {
 	//Test application
     CFlex32CardService javacard = (CFlex32CardService) sm.getCardService(
         CFlex32CardService.class, true);
-    javacard.selectApplication(HexString.parseHexString("A00000000101"));
-    byte[] number = {(byte)123,23};
+    javacard.selectApplication(HexString.parseHexString("A00000000201"));
+    byte[] numbers = {10,23};
 	byte[] operator = {'+'};
     try {
 		javacard.allocateChannel();
 
 		ResponseAPDU res;
 
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,0));
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,numbers,0));
+		System.out.println(res);
       	res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,operator,4));
+      	System.out.println(res);
 
       	System.err.println(res.getBuffer()[0]);
     } finally {

@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# Copyright © 2001 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+JAVA_HOME=${JAVA_HOME:-/usr/java1.2}
+
+bin_home=`/bin/dirname $0`
+JC21_HOME=${JC21_HOME:-$bin_home/..}
+
+JC_PATH=$JC21_HOME/lib/apdutool.jar:$JC21_HOME/lib/apduio.jar:$JC21_HOME/lib/converter.jar:$JC21_HOME/lib/jcwde.jar:$JC21_HOME/lib/scriptgen.jar:$JC21_HOME/lib/offcardverifier.jar:$JC21_HOME/lib/api21.jar:$JC21_HOME/lib/capdump.jar:$JC21_HOME/samples/classes:$CLASSPATH
+
+JFLAGS="-native -classpath $JC_PATH"
+$JAVA_HOME/bin/java $JFLAGS com.sun.javacard.apdutool.Main "$@"
