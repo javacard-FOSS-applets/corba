@@ -30,7 +30,7 @@ public class CalcModel {
 	 * @throws CannotProceed 
 	 * @throws NotFound */
 	public CalcModel() throws InvalidName, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed  {
-		ResourceBundle config = PropertyResourceBundle.getBundle("Config");
+		ResourceBundle config = PropertyResourceBundle.getBundle("config");
 		String host = config.getString("host");
 		String port = config.getString("port");
 		String nameObject = config.getString("id");

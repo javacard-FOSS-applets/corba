@@ -24,7 +24,7 @@ import fr.umlv.ir3.corba.calculator.impl.CalculatorImpl;
 public class Server{
 	private ORB orb;
 	public Server() throws InvalidName, ServantAlreadyActive, WrongPolicy, org.omg.CosNaming.NamingContextPackage.InvalidName, ObjectNotActive, NotFound, CannotProceed, AdapterInactive {
-		ResourceBundle config = PropertyResourceBundle.getBundle("Config");
+		ResourceBundle config = PropertyResourceBundle.getBundle("config");
 		String host = config.getString("host");
 		String port = config.getString("port");
 		String nameObject = config.getString("id");
