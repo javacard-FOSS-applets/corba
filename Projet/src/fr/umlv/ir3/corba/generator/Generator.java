@@ -1,5 +1,6 @@
 package fr.umlv.ir3.corba.generator;
 
+import java.lang.reflect.Method;
 
 public class Generator {
 	private Class file;
@@ -7,6 +8,13 @@ public class Generator {
 	private String packageApplet = "";
 	private String destinationPath = "./";
 	private String error="";
+	
+	public Generator(){
+	}
+	
+	public Generator(String className) throws ClassNotFoundException{	
+		this.file = Class.forName(className);
+	}
 	
 	public boolean generateAppletStub() throws ClassNotFoundException{
 		if(file==null) throw new ClassNotFoundException("Attribute class is missing");
@@ -46,5 +54,10 @@ public class Generator {
 	public String getInterface() throws ClassNotFoundException {
 		if(file==null) throw new ClassNotFoundException("Attribute class is missing");
 		return file.getName();
+	}
+	
+	public Method[] getOperationsMethod() {
+		Method[] methods = this.file.getMethods();
+		return methods;
 	}
 }
