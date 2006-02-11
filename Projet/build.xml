@@ -1,24 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="IDLJ" default="all" basedir=".">
-	<description>Ant pour le projet CORBA avec Java</description>
+<project name="IDLJ" default="idlj" basedir=".">
+	<description>Ant pour le projet CORBA</description>
 
+    <!-- Décrie le projet -->
+    <property name="project.title" value="Corba Project"/>
+    <property name="project.distname" value="Zi Project"/>
+    <property name="project.version" value="0.1"/>
+	
 	<!-- Definie les proprietes globales pur cette compilation -->
 	<property name="projectName" value="MonProjet" />
-	<property name="generated" value="generated" />
-	<property name="idl.dir" value="." />
-	<property name="idl.file" value="calculator.idl" />
-	<property name="idl.exec" value="/home/seb/workspace/Appet/lib" />
+	<property name="generated" value="./generated" />
+	<property name="idl.file" value="./calculator.idl" />
+	<property name="idl.exec" value="idlj" />
 	<property name="idl.module" value="calculator" />
 	<property name="idl.package" value="fr.umlv.ir3.corba" />
+    <property name="src.path" value="./src"/>
+	<property name="javadoc.path" value="./api"/>
+	<property name="lib.path" value="./lib"/>
 	
-	<target name="clean">
+    <!-- Definie le classpath -->
+    <path id="classpath">
+    	<pathelement path="${generated}"/>
+    	<fileset dir="${lib.path}">
+          <include name="*.jar"/>
+        </fileset>
+
+    </path>
+	
+    <!-- Target: Genere la javadoc -->
+    <target name="javadoc" description="Generate JavaDoc API documentation">
+        <delete dir="${javadoc.path}"/>
+        <mkdir dir="${javadoc.path}"/>
+        <javadoc sourcepath="${src.path}" 
+            destdir="${javadoc.path}"
+            packagenames="*" 
+        	encoding="UTF-8"
+            author="true"
+            private="true"
+            version="true"
+            windowtitle="${project.title} API Documentation"
+            doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
+            bottom="Copyright &#169; 2006">
+        	<classpath path="${generated}"/>
+            <classpath refid="classpath"/>
+        </javadoc>
+    </target>
+	
+	<target name="idlj" description="Generate interfaces from IDL file">
 		<delete dir="${generated}" />
-	</target>
-	<target name="prepare">
 		<mkdir dir="${generated}" />
-	</target>
-	<target name="all" depends="clean,prepare">
-		<echo>Genere les stubs, les classes helper et l'approche a partir du fichier IDL ${idl.file}</echo>
+		<echo>Generation du fichier idlj</echo>
 		<exec executable="${idl.exec}">
 			<arg value="-td" />
 			<arg value="${generated}" />
