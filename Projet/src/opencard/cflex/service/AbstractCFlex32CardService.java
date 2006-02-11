@@ -688,15 +688,10 @@ public abstract class AbstractCFlex32CardService extends CardService implements 
   /**
    * Method to send an APDU and get the response
    * 
-   * 
-   * @param apdu
-   *          to send.
-   * 
+   * @param commandAPDU apdu to send.
    * @return the response APDU
-   * 
    * @exception CardTerminalException
    *              is raised if the APDU could not be send or received.
-   * 
    */
   public ResponseAPDU sendAPDU(CommandAPDU commandAPDU) throws CardTerminalException {
 

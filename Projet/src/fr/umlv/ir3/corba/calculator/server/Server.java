@@ -38,7 +38,6 @@ public class Server{
      * TODO: completer les exceptions
      * Constructs an instance of calculator applet server
      * This method initializes javacard terminal access
-     * @return an instance of calculator applet server
      * @throws InvalidName - if the given name is not associated with a known service
      * @throws WrongPolicy raised if the SYSTEM_ID and RETAIN policies are not specified.
      * @throws ServantAlreadyActive - is raised if the POA has UNIQUE_ID policy and servant is is already in the Active Object Map.

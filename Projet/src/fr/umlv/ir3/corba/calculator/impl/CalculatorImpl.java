@@ -41,7 +41,6 @@ public class CalculatorImpl extends AppletCalculatorPOA{
      * TODO: completer les exceptions
      * Constructs an instance of calculator applet client by initializing Java Card access service
      * This method initializes javacard terminal access
-     * @return an instance of calculator applet
      * @throws ClassNotFoundException ?
      * @throws CardTerminalException ?
      * @throws CardServiceException ?
@@ -73,7 +72,6 @@ public class CalculatorImpl extends AppletCalculatorPOA{
     
     /**
      * Closes access applet channel
-     * @return void
      */
     public void closeCardAccess(){
         //TODO: doit on refermer le channel à la fin ?

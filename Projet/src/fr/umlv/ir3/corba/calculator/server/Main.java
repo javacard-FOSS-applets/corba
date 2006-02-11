@@ -9,9 +9,6 @@ public class Main {
     /**
      * This method launchs a calculator corba server
      * @param args not used
-     * @param pass the password of the current user
-     * @return the user authenticated , null if no user in database
-     * @throws HileException
      */
 	public static void main(String[] args) {
 		try {
