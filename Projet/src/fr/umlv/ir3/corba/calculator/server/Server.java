@@ -25,9 +25,35 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import fr.umlv.ir3.corba.calculator.impl.CalculatorImpl;
 
+/**
+ * This class provides an implementation of corba server using a distant calculator applet in card terminal 
+ * @author BARBISAN Laurent, BOITEL Olivier, GUILLON Denis, LAMPS S�bastien 
+ */
+
 public class Server{
 	private ORB orb;
-	public Server() throws InvalidName, ServantAlreadyActive, WrongPolicy, org.omg.CosNaming.NamingContextPackage.InvalidName, ObjectNotActive, NotFound, CannotProceed, AdapterInactive, ClassNotFoundException, OpenCardPropertyLoadingException, CardServiceException, CardTerminalException {
+    private CalculatorImpl calculator;
+    
+    /**
+     * TODO: completer les exceptions
+     * Constructs an instance of calculator applet server
+     * This method initializes javacard terminal access
+     * @return an instance of calculator applet server
+     * @throws InvalidName - if the given name is not associated with a known service
+     * @throws WrongPolicy raised if the SYSTEM_ID and RETAIN policies are not specified.
+     * @throws ServantAlreadyActive - is raised if the POA has UNIQUE_ID policy and servant is is already in the Active Object Map.
+     * @throws ObjectNotActive - if the Object Id value is not active in the POA.
+     * @throws org.omg.CosNaming.NamingContextPackage.InvalidName - Indicates the name does not identify a binding.
+     * @throws CannotProceed - Indicates that the implementation has given up for some reason. The client, however, may be able to continue the operation at the returned naming context.
+     * @throws NotFound - Indicates the name does not identify a binding.
+     * @throws AdapterInactive - is raised if the operation is invoked on the POAManager in inactive state.
+     * @throws ClassNotFoundException 
+     * @throws CardTerminalException 
+     * @throws CardServiceException 
+     * @throws OpenCardPropertyLoadingException 
+     */
+    
+	public Server(String appletId) throws InvalidName, ServantAlreadyActive, WrongPolicy, ObjectNotActive, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed, AdapterInactive, OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException {
 		ResourceBundle config = PropertyResourceBundle.getBundle("config");
 		String host = config.getString("host");
 		String port = config.getString("port");
@@ -39,11 +65,13 @@ public class Server{
 		orb = ORB.init(new String[1],props);
 		org.omg.CORBA.Object o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
-		
 		POA root =  POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 		
-		CalculatorImpl calculator;
-		calculator = new CalculatorImpl("A00000000101");
+		calculator = new CalculatorImpl();
+        System.out.println("Insert your card ...");
+        calculator.initCardAccess(appletId);
+        System.out.println("Card found");
+        
 		byte [] id = root.activate_object(calculator);
 		org.omg.CORBA.Object ref = root.id_to_reference(id);
 		
@@ -56,9 +84,17 @@ public class Server{
 		root.the_POAManager().activate();
 	}
 
+    /**
+     * Starts a calculator applet server instance
+     */
 	public void start() {
-		System.out.println("Server Running");
 		orb.run();
-		System.out.println("Server stopped");		
-	}        
+	}
+    /**
+     * Stops a calculator applet server instance
+     */  
+    public void stop() {
+        calculator.closeCardAccess();
+        orb.destroy();     
+    }   
 }

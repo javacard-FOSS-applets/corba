@@ -13,21 +13,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import fr.umlv.ir3.corba.calculator.CardException;
+import fr.umlv.ir3.corba.calculator.InitializationException;
 import fr.umlv.ir3.corba.calculator.InvalidOperator;
 import fr.umlv.ir3.corba.calculator.StackOverFlow;
 
 
 class CalcGUI{
 	private static final long serialVersionUID = 1L;
-	private CalcModel model; 
+	private CalcClient model; 
 	private String number="";
 	
 	private JFrame window;
 	private JTextField operationField;
 	private JTextField resultField;
 	private final Font BIGGER_FONT = new Font("monspaced", Font.PLAIN, 20);
-	public CalcGUI(CalcModel model) {
+	public CalcGUI(CalcClient model) {
 		this.model = model;
+    }
+    
+    public void start(){
 		window = new JFrame();
 		
 		//Display fields
@@ -105,12 +110,21 @@ class CalcGUI{
 	}
 	
 	
-	/** Called by Clear btn action listener and elsewhere.*/
-	private void action_clear() {
-//		TODO: model.clear();
-		operationField.setText("");
-		resultField.setText("0");
-		number="";
+	/** Called by Clear btn action listener and elsewhere.
+	 * @throws CardException */
+	private void action_clear(){
+		try {
+			model.clear();
+			operationField.setText("");
+			resultField.setText("0");
+			number="";
+		} catch (CardException e) {
+			System.err.println("Card error: Card use error ("+ e.getMessage() + ")");
+			JOptionPane.showMessageDialog(window, "Card use error", "Card error", JOptionPane.ERROR_MESSAGE);
+		} catch (InitializationException e) {
+            System.err.println("Card error: Card initialization error ("+ e.getMessage() + ")");
+            JOptionPane.showMessageDialog(window, "Card initialization error", "Card error", JOptionPane.ERROR_MESSAGE);
+        }
 	}
 	
 	private class NumListener implements ActionListener{
@@ -122,32 +136,53 @@ class CalcGUI{
 		}
 	};
 	private class OpListener implements ActionListener{
-		public void actionPerformed(ActionEvent e) {
-			char operator = e.getActionCommand().charAt(0);
+		public void actionPerformed(ActionEvent event) {
+			char operator = event.getActionCommand().charAt(0);
 			try {
 				if (!number.equals("")) model.addOperand(Short.parseShort(number));
 				resultField.setText("" + model.getResult(operator));
 				operationField.setText(operationField.getText() + " " + operator + " " );
 				number="";
 				resultField.setText("10");
-			} catch (InvalidOperator e1) {
-				JOptionPane.showMessageDialog(window, "This operation need an valid operator", "Applet error", JOptionPane.ERROR_MESSAGE);
-			} catch (StackOverFlow e1) {
+			} catch (InvalidOperator e) {
+				System.err.println("Applet error: Invalid operator ("+ e.getMessage() + ")");
+				JOptionPane.showMessageDialog(window, "Invalid operator", "Applet error", JOptionPane.ERROR_MESSAGE);
+			} catch (StackOverFlow e) {
+				System.err.println("Applet error: Stack overflow ("+ e.getMessage() + ")");				
 				JOptionPane.showMessageDialog(window, "Stack overflow", "Applet error", JOptionPane.ERROR_MESSAGE);
+			}catch (NumberFormatException e) {
+				System.err.println("Internal error: Number format invalid ("+ e.getMessage() + ")");
+				JOptionPane.showMessageDialog(window, "Number format invalid", "Internal error", JOptionPane.ERROR_MESSAGE);
+            } catch (InitializationException e) {
+                System.err.println("Card error: Card initialization error ("+ e.getMessage() + ")");
+                JOptionPane.showMessageDialog(window, "Card initialization error", "Card error", JOptionPane.ERROR_MESSAGE);
+            } catch (CardException e) {
+				System.err.println("Card error: Card use error ("+ e.getMessage() + ")");
+				JOptionPane.showMessageDialog(window, "Card use error", "Card error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	};
 	private class EnterListener implements ActionListener{
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent event) {
 			try {
 				if (!number.equals("")){
 					model.addOperand(Short.parseShort(number));
 					operationField.setText(operationField.getText() + " ");
 					number="";
 				}
-			} catch (StackOverFlow e1) {
+			} catch (StackOverFlow e) {
+				System.err.println("Applet error: Stack overflow ("+ e.getMessage() + ")");
 				JOptionPane.showMessageDialog(window, "Stack overflow", "Applet error", JOptionPane.ERROR_MESSAGE);
-			}
+			} catch (NumberFormatException e) {
+				System.err.println("Internal error: Number format invalid ("+ e.getMessage() + ")");
+				JOptionPane.showMessageDialog(window, "Number format invalid", "Internal error", JOptionPane.ERROR_MESSAGE);
+			} catch (CardException e) {
+				System.err.println("Card error: Card use error ("+ e.getMessage() + ")");
+				JOptionPane.showMessageDialog(window, "Card use error", "Card error", JOptionPane.ERROR_MESSAGE);
+            } catch (InitializationException e) {
+                System.err.println("Card error: Card initialization error ("+ e.getMessage() + ")");
+                JOptionPane.showMessageDialog(window, "Card initialization error", "Card error", JOptionPane.ERROR_MESSAGE);
+            }
 		}
 	}
 }

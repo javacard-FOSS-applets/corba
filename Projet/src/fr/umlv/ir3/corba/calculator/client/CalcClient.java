@@ -14,10 +14,12 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import fr.umlv.ir3.corba.calculator.AppletCalculator;
 import fr.umlv.ir3.corba.calculator.AppletCalculatorHelper;
+import fr.umlv.ir3.corba.calculator.CardException;
+import fr.umlv.ir3.corba.calculator.InitializationException;
 import fr.umlv.ir3.corba.calculator.InvalidOperator;
 import fr.umlv.ir3.corba.calculator.StackOverFlow;
 
-public class CalcModel {
+public class CalcClient {
 	private AppletCalculator calculator;
 	
 	/** Constructor 
@@ -29,7 +31,7 @@ public class CalcModel {
 	 * @throws NotFound 
 	 * @throws CannotProceed 
 	 * @throws NotFound */
-	public CalcModel() throws InvalidName, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed  {
+	public CalcClient() throws InvalidName, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed  {
 		ResourceBundle config = PropertyResourceBundle.getBundle("config");
 		String host = config.getString("host");
 		String port = config.getString("port");
@@ -48,14 +50,14 @@ public class CalcModel {
 		System.out.println("CLIENT: " + orb.object_to_string(calculator));
 
 	}
-	
-	public short getResult(char operator) throws InvalidOperator {
+    
+	public short getResult(char operator) throws InvalidOperator, CardException, InitializationException {
 		return calculator.result(operator);
 	}
-	public void addOperand(short operand) throws StackOverFlow{
+	public void addOperand(short operand) throws StackOverFlow, CardException, InitializationException{
 		calculator.addNumber(operand);
 	}
-	public void clear(){
+	public void clear() throws CardException, InitializationException{
 		calculator.clear();
 	}
 	
