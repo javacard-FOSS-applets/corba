@@ -1,0 +1,6 @@
+fr.umlv.ir3.corba.calculator.client
+fr.umlv.ir3.corba.calculator.impl
+fr.umlv.ir3.corba.calculator.server
+fr.umlv.ir3.corba.generator
+opencard.cflex.service
+opencard.cflex.util
