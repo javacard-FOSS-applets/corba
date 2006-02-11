@@ -1,11 +1,12 @@
 module calculator {
 	exception InvalidOperator{string message;};
 	exception StackOverFlow{string message;};
-	exception CardTerminalException{string message;};
+	exception CardException{string message;};
+	exception InitializationException{string message;};
 
 	interface AppletCalculator{
-		short result(in char operator) raises (InvalidOperator, CardTerminalException);
-		void addNumber(in short number) raises (StackOverFlow, CardTerminalException);
-		void clear();
+		short result(in char operator) raises (InvalidOperator, CardException, InitializationException);
+		void addNumber(in short number) raises (StackOverFlow, CardException, InitializationException);
+		void clear() raises (CardException, InitializationException);
 	};
 };
