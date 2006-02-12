@@ -127,11 +127,23 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 		case RESULT:
 			result(apdu);
 			break;
+		case CLEAR:
+			clear();
+			break;
 		default:
 			ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
 		}
 
 	}
+	
+	/**
+	 * reset the stack
+	 */
+	private void clear() {
+		//FIXME: renvoyé une comande de success
+		cursor=0;
+	}
+
 	/**
 	 * Push into stack the number pass into apdu
 	 * @param apdu apdu with the number
