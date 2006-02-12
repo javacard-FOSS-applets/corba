@@ -7,9 +7,10 @@ import javax.swing.JOptionPane;
 public class Main {
 	public static void main(String[] args) {
 		try {
-			Generator generator = new Generator("fr.umlv.ir3.corba.calculator.AppletCalculator");
+			Generator generator = new Generator("fr.umlv.ir3.corba.calculator.AppletCalculatorOperations");
 			Method[] m = generator.getOperationsMethod();
 			for(int i=0;i<m.length;i++){
+				System.out.println("affichage methode" + m[i]);
 				System.out.println("Nom : " + m[i].getName() + 
 						"/// Return type: " + m[i].getGenericReturnType().toString() + "    //// Paramètres : " + m[i].getGenericParameterTypes().toString() );
 			}
