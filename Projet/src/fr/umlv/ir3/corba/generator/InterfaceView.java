@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class InterfaceView {
 	
-//	 liste des methodes de l'interface IDL
+//	liste des methodes de l'interface IDL
 	private ArrayList<Method> interfaceMethods;
 	// liste des numeros d'instructions correspondant aux methodes
 	private int [] instructionsNumber;
@@ -67,11 +67,27 @@ public class InterfaceView {
 		
 		return declarations;
 	}
-
+	
+	public String[] getInstructionNames()
+	{
+		int nbMethods = interfaceMethods.size();
+		
+		String[] declarations = new String [nbMethods];
+		
+		for(int i=0; i < nbMethods; i++)
+		{
+			Method m = interfaceMethods.get(i);
+			
+			declarations[i] = m.getName().toUpperCase();  
+		}
+		
+		return declarations;
+	}
+	
 	public String getClassPrefix() {
 		return classPrefix;
 	}
-
+	
 	public void setClassPrefix(String classPrefix) {
 		this.classPrefix = classPrefix;
 	}
