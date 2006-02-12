@@ -1,11 +1,17 @@
 package fr.umlv.ir3.corba.calculator.utils;
 
+/**
+ * Util classes for conversion number
+ * @author lbarbisan
+ *
+ */
 public class Util {
 
 	/**
      * Converts a short into a 2 byte array
      * 
      * @param i short to convert
+	 * @return array of 2 byte
      */
     public static byte[] ShortToBytePair(short i)
     {
@@ -20,6 +26,7 @@ public class Util {
      * 
      * @param msb most significant byte
      * @param lsb least significant byte
+     * @return short from the 2 byte
      */
     public static short BytePairToShort(byte msb, byte lsb)
     {

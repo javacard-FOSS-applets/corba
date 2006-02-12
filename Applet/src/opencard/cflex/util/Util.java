@@ -1,5 +1,10 @@
 package opencard.cflex.util;
 
+/**
+ * Utils class for number conversion
+ * @author lbarbisan
+ *
+ */
 public class Util {
 
 
@@ -7,6 +12,7 @@ public class Util {
      * Converts a short into a 2 byte array
      * 
      * @param i short to convert
+	 * @return  array of 2 byte from short
      */
     public static byte[] ShortToBytePair(short i)
     {
@@ -21,6 +27,7 @@ public class Util {
      * 
      * @param msb most significant byte
      * @param lsb least significant byte
+     * @return short from array of 2 byte
      */
     public static short BytePairToShort(byte msb, byte lsb)
     {

@@ -18,6 +18,11 @@ import opencard.core.util.HexString;
 import opencard.core.util.OpenCardPropertyLoadingException;
 import opencard.opt.terminal.ISOCommandAPDU;
 
+/**
+ * Client for javacard calculator applett
+ * @author lbarbisan
+ *
+ */
 public class RPNClient {
 
 
@@ -32,7 +37,16 @@ public class RPNClient {
 	final static byte CLEAR = (byte) 0x40;
 	
 
-  public static void main(String[] args) throws CardTerminalException, OpenCardPropertyLoadingException, CardServiceException, ClassNotFoundException, UnsupportedEncodingException {
+ /**
+ * Main methode 
+ * @param args args pass in the commande line
+ * @throws CardTerminalException CardTerminalException
+ * @throws OpenCardPropertyLoadingException OpenCardPropertyLoadingException
+ * @throws CardServiceException CardServiceException
+ * @throws ClassNotFoundException ClassNotFoundException
+ * @throws UnsupportedEncodingException UnsupportedEncodingException
+ */
+public static void main(String[] args) throws CardTerminalException, OpenCardPropertyLoadingException, CardServiceException, ClassNotFoundException, UnsupportedEncodingException {
 
 	//Try to starrt service
     if (SmartCard.isStarted() == false) {
@@ -85,7 +99,7 @@ public class RPNClient {
 		javacard.allocateChannel();
 
 		ResponseAPDU res;
-
+		//TODO : faire un client plus poussé
 		byte[] number = new byte[1];
 		number[0] = (byte)((short)2);
 		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
