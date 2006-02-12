@@ -26,16 +26,23 @@ import fr.umlv.ir3.corba.calculator.StackOverFlow;
  */
 
 public class CalculatorImpl extends AppletCalculatorPOA{
-	//This applet is designed to respond to the following class of instructions.
-	private final static byte CalculatorApplet_CLA = (byte)0x86;
+	//  This applet is designed to respond to the following
+	//  class of instructions.
+	final static byte CalculatorApplet_CLA = (byte)0x86;
 
-	//Instruction set for CalculatorApplet
-    private final static byte PUSH = (byte)0x10;
-    private final static byte RESULT = (byte)0x20;
-    private final static byte CLEAR = (byte) 0x30;
+	//  Instruction set for CalculatorApplet
+	final static byte PUSH = (byte)0x10;
+	final static byte POP = (byte) 0x20;
+	final static byte RESULT = (byte)0x30;
+	final static byte CLEAR = (byte) 0x40;
 	
     //TODO: Ca s'appelle comment ce truc ? ;-)
 	private CFlex32CardService javacard;
+	
+	private CardTerminal terminal=null;
+	private SmartCard sm = null;
+	private CardRequest cr = null;
+	
 	
     /**
      * TODO: completer les exceptions
@@ -58,23 +65,47 @@ public class CalculatorImpl extends AppletCalculatorPOA{
      * @throws ClassNotFoundException ?
      * @throws CardTerminalException ?
      * @throws CardServiceException ?
+     * @throws OpenCardPropertyLoadingException ?
      */
-    public void initCardAccess(String appletId) throws CardTerminalException, CardServiceException, ClassNotFoundException{
-		//Wait for insert card
-	    CardRequest cr = new CardRequest(CardRequest.ANYCARD, null, null);
-	    SmartCard sm = SmartCard.waitForCard(cr);
+    public void initCardAccess(String appletId) throws CardTerminalException, CardServiceException, ClassNotFoundException, OpenCardPropertyLoadingException{
+    	//Wait for insert card
+        if(terminal.isCardPresent(0)==false)
+        {
+        	System.out.println("Re-insert/Insert your card ...");
+        	cr = new CardRequest(CardRequest.NEWCARD, terminal, null);	
+        }
+        else
+        {
+        	cr = new CardRequest(CardRequest.ANYCARD, terminal, null);
+        }
+        sm = SmartCard.waitForCard(cr);
+        
+        if(sm==null)
+        {
+        	throw new NullPointerException("Error when waiting for card to become ready");
+        }
 
-		//Get channel to access card applet
-	    javacard = (CFlex32CardService) sm.getCardService(CFlex32CardService.class, true);
-	    javacard.selectApplication(HexString.parseHexString(appletId));
-		javacard.allocateChannel();
+    	//Test application
+        javacard = (CFlex32CardService) sm.getCardService(CFlex32CardService.class, true);
+        javacard.selectApplication(HexString.parseHexString("A00000000201"));
+        
+    	javacard.allocateChannel();
+
+    	
+    	//Start card service
+        if (!SmartCard.isStarted()) {
+          SmartCard.start();
+        }
+        
+        //DEBUG: List terminal on the computer
+        printDebug(CardTerminalRegistry.getRegistry());
 	}
     
     /**
      * Closes access applet channel
      */
     public void closeCardAccess(){
-        //TODO: doit on refermer le channel à la fin ?
+        javacard.releaseChannel();
     }
     
     /**
@@ -86,11 +117,10 @@ public class CalculatorImpl extends AppletCalculatorPOA{
      */
 	public short result(char operator) throws InvalidOperator, CardException, InitializationException{
       	try {
-    		byte[] operatorInByte = {(byte)operator};
             //Send APDU trame to applet
-    		ResponseAPDU res = sendCommand(RESULT,operatorInByte);
+    		ResponseAPDU res = sendCommand(RESULT,(byte)operator);
     		//TODO: verifier la bonne utilisation du traitement des reponses
-    		return Util.BytePairToShort(res.data()[0],res.data()[1]);
+    		return res.data()[0];
 		} catch (CardTerminalException e) {
 			throw new CardException(e.getMessage());
 		}
@@ -104,9 +134,8 @@ public class CalculatorImpl extends AppletCalculatorPOA{
      */
 	public void addNumber(short number) throws StackOverFlow, CardException, InitializationException {
 		try {
-			byte[] numberInByte = Util.ShortToBytePair(number);
             //Send APDU trame to applet
-			sendCommand(PUSH,numberInByte);
+			sendCommand(PUSH,(byte)number);
 		} catch (CardTerminalException e) {
 			throw new CardException(e.getMessage());
 		}
@@ -119,9 +148,8 @@ public class CalculatorImpl extends AppletCalculatorPOA{
      */
 	public void clear() throws InitializationException, CardException {
         try {
-            byte[] empty = {};
             //Send APDU trame to applet
-            sendCommand(CLEAR,empty);
+            sendCommand(CLEAR);
         } catch (CardTerminalException e) {
             throw new CardException(e.getMessage());
         }
@@ -129,14 +157,27 @@ public class CalculatorImpl extends AppletCalculatorPOA{
     
     /************************************************ Private methods *******************************************************************/
     private void initTerminal() throws OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException{
-        //Start card service
-        if (!SmartCard.isStarted()) {
+        
+    	//Try to starrt service
+        if (SmartCard.isStarted() == false) {
           SmartCard.start();
         }
         
-        //DEBUG: List terminal on the computer
-        printDebug(CardTerminalRegistry.getRegistry());
+    	//List terminal on the computer
+    	CardTerminalRegistry ctr = CardTerminalRegistry.getRegistry();
+            	
+    	for (Enumeration terminals = ctr.getCardTerminals();terminals.hasMoreElements();) {
+          terminal = (CardTerminal) terminals.nextElement(); 
+          //TODO : Trouver une solution pous élégante
+        }
+
+    	if(terminal==null)
+    	{
+    		//TODO : Remonter les exception correctement
+    		throw new NullPointerException("Couldn't not retrieve a card reader");
+    	}
     }
+    
     private void printDebug(CardTerminalRegistry ctr ) {
         for (Enumeration terminals = ctr.getCardTerminals();terminals.hasMoreElements();) {
               CardTerminal terminal = (CardTerminal) terminals.nextElement(); 
@@ -163,7 +204,14 @@ public class CalculatorImpl extends AppletCalculatorPOA{
               }
         }
     }
-    private ResponseAPDU sendCommand(byte command, byte[] value) throws CardTerminalException, InitializationException{
-        return javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,value,0));
+    
+    private ResponseAPDU sendCommand(byte command, byte value) throws CardTerminalException, InitializationException{
+        byte[] values = new byte[1];
+        values[0] = value;
+    	return javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,values,values.length));
+    }
+    
+    private ResponseAPDU sendCommand(byte command) throws CardTerminalException, InitializationException{
+    	return javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,new byte[0],0));
     }
 }

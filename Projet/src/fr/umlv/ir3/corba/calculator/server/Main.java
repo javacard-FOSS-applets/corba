@@ -13,7 +13,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 		    //initialize server
-			Server server = new Server("A00000000101");
+			Server server = new Server("A00000000201");
 			//launch server
             System.out.println("Server Running");
             server.start();
@@ -21,6 +21,7 @@ public class Main {
             server.stop();
             System.out.println("Server stopped");  
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("Erreur: " + e.getMessage());
 		}
 	}
