@@ -7,7 +7,7 @@ package fr.umlv.ir3.corba.generator;
  * this interface represent all the required methods of a javacard applet
  * a generator of applet must implement all of those methods
  */
-public interface appletInterface 
+public interface AppletInterface 
 {
 	public String generateProcessMethod();
 	public String generateInstallMethod();

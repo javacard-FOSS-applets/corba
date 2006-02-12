@@ -1,14 +1,9 @@
 package fr.umlv.ir3.corba.generator;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 
-import javacard.framework.ISO7816;
-import javacard.framework.ISOException;
-
-public class AppletSqueleton extends AbstractSqueleton implements appletInterface
+public class AppletSqueleton extends AbstractSqueleton implements AppletInterface
 {
-
+	
 	public AppletSqueleton(InterfaceView squeletonInterface)
 	{
 		super(squeletonInterface);
@@ -19,93 +14,92 @@ public class AppletSqueleton extends AbstractSqueleton implements appletInterfac
 	{
 		return this.SqueletonInterface.getClassPrefix() + "Applet";
 	}
-
-	@Override
-	public void generateSqueleton(String path) throws FileNotFoundException 
-	{	
-		String fullPath = AbstractSqueleton.treatPath(path)+this.className+".java";
-		PrintWriter outFile = new PrintWriter(fullPath);
-		
-		//on insere l'ensemble des instruction dans le fichier créé
-		
-	}
-
+	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.appletInterface#generateProcessMethod()
+	 * @see fr.umlv.ir3.corba.generator.AppletInterface#generateProcessMethod()
 	 */
 	public String generateProcessMethod() 
 	{
-		String method = "";
-		method+= "public void process(APDU apdu) throws ISOException{\n";
-		method+= indent(1) + "byte buffer[] = apdu.getBuffer();\n";
-		method+= indent(1) + "if (selectingApplet()) {\n";
-		method+= indent(2) + "SOException.throwIt(ISO7816.SW_NO_ERROR);\n";
-		method+= indent(1) + "}\n";
+		StringBuilder sb = new StringBuilder();
 		
-		method+= indent(1) + " byte ins = buffer[ISO7816.OFFSET_INS];\n";
-		method+= indent(1) + "switch (ins) {\n";
+		sb.append("public void process(APDU apdu) throws ISOException{\n")
+		.append(indent(1)).append("byte buffer[] = apdu.getBuffer();\n")
+		.append(indent(1)).append("if (selectingApplet()) {\n")
+		.append(indent(2)).append("SOException.throwIt(ISO7816.SW_NO_ERROR);\n")
+		.append(indent(1)).append("}\n")
+		.append(indent(1)).append(" byte ins = buffer[ISO7816.OFFSET_INS];\n")
+		.append( indent(1)).append("switch (ins) {\n");
+		
+		//TODO : ajouter le test sur le CLA
 		
 		String[] instructions = this.SqueletonInterface.getInstructionNames();
 		for (int i = 0; i < instructions.length; i++) 
 		{
-			method+= indent(1) + "case" + instructions[i]+":\n";
+			sb.append(indent(1)).append("case").append(instructions[i].toUpperCase()).append(":\n")
+			.append(indent(2)).append(instructions[i]).append("(apdu);\n")
+			.append(indent(2)).append("break;\n");
 		}
 		
-		/*
+		sb.append(indent(1)).append("default :\n")
+		.append("ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);\n")
+		.append("}");
 		
-		if (buffer[ISO7816.OFFSET_CLA] != CalculatorApplet_CLA) 
-				ISOException.throwIt(ISO7816.SW_CLA_NOT_SUPPORTED);
-    
-        byte ins = buffer[ISO7816.OFFSET_INS];
-        
-		switch (ins) {
-
-		case PUSH:
-			push(apdu);
-			break;
-		case POP:
-			pop(apdu);
-			break;
-		case RESULT:
-			result(apdu);
-			break;
-		case CLEAR:
-			clear();
-			break;
-		default:
-			ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
-		}*/
-		
-		return method;
+		return sb.toString();
 	}
-
+	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.appletInterface#generateInstallMethod()
+	 * @see fr.umlv.ir3.corba.generator.AppletInterface#generateInstallMethod()
 	 */
 	public String generateInstallMethod() 
 	{	
 		return null;
 	}
-
+	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.appletInterface#generateSelectMethod()
+	 * @see fr.umlv.ir3.corba.generator.AppletInterface#generateSelectMethod()
 	 */
 	public String generateSelectMethod() 
 	{
 		return null;
 	}
-
+	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#starClass()
+	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
 	 */
 	@Override
-	protected String starClass() 
-	{
-		return "public class "+ this.className + "extends javacard.framework.Applet {";
+	protected void generateStartClass(StringBuilder code) {
+		//TODO : ajouter les import
+		code.append("public class "+ this.className + "extends javacard.framework.Applet {");
 	}
-
+	
+	/**
+	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
+	 */
+	@Override
+	protected void generateMethods(StringBuilder code) {
+		
+	}
+	
+	/**
+	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateFinalize(java.lang.StringBuilder)
+	 */
+	@Override
+	protected void generateFinalize(StringBuilder code) {
+	
+	}
+	
+	/**
+	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateInitialize(java.lang.StringBuilder)
+	 */
+	@Override
+	protected void generateInitialize(StringBuilder code) {
+		
+	}
 	
 	
+	public static void main(String[] args) {
+		
+	}
 	
-
+	
 }
