@@ -2,7 +2,6 @@ package fr.umlv.ir3.corba.calculator.utils;
 
 public class Util {
 
-
 	/**
      * Converts a short into a 2 byte array
      * 
@@ -29,5 +28,4 @@ public class Util {
         slsb = (short)(lsb & (short)0x00FF);
         return (short) (smsb | slsb);
     }
-	
 }

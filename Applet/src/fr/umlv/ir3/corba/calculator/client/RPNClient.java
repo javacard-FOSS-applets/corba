@@ -6,8 +6,6 @@ package fr.umlv.ir3.corba.calculator.client;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
-import com.sun.java_cup.internal.terminal;
-
 import opencard.cflex.service.CFlex32CardService;
 import opencard.core.service.CardRequest;
 import opencard.core.service.CardServiceException;
@@ -19,20 +17,19 @@ import opencard.core.terminal.ResponseAPDU;
 import opencard.core.util.HexString;
 import opencard.core.util.OpenCardPropertyLoadingException;
 import opencard.opt.terminal.ISOCommandAPDU;
-import fr.umlv.ir3.corba.calculator.applet.Util;
 
 public class RPNClient {
 
 
 	//  This applet is designed to respond to the following
 	//  class of instructions.
-
 	final static byte CalculatorApplet_CLA = (byte)0x86;
 
 	//  Instruction set for CalculatorApplet
 	final static byte PUSH = (byte)0x10;
-	final static byte RESULT = (byte)0x20;
-	final static byte CLEAR = (byte) 0x30;
+	final static byte POP = (byte) 0x20;
+	final static byte RESULT = (byte)0x30;
+	final static byte CLEAR = (byte) 0x40;
 	
 
   public static void main(String[] args) throws CardTerminalException, OpenCardPropertyLoadingException, CardServiceException, ClassNotFoundException, UnsupportedEncodingException {
@@ -83,22 +80,20 @@ public class RPNClient {
     CFlex32CardService javacard = (CFlex32CardService) sm.getCardService(
         CFlex32CardService.class, true);
     javacard.selectApplication(HexString.parseHexString("A00000000201"));
-    byte[] number1 = Util.ShortToBytePair((short)100);
-    byte[] number2 = Util.ShortToBytePair((short)30);
-	byte[] operator = {'+'};
+    
     try {
 		javacard.allocateChannel();
 
 		ResponseAPDU res;
 
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number1,number1.length));
-		System.out.println(res);
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number2,number2.length));
-		System.out.println(res);
-      	res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,operator,1));
-      	System.out.println(res);
-
-      	System.err.println(res.getBuffer()[0]);
+		byte[] number = new byte[1];
+		number[0] = (byte)((short)2);
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
+		number[0] = (byte)((short)3);
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
+		number[0] = (byte)('*');
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,number,1));
+      	System.out.println("Result : " + (short)res.getBuffer()[0]);
     } finally {
       javacard.releaseChannel();
     }
