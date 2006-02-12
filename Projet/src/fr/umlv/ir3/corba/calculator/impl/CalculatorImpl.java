@@ -3,7 +3,6 @@ package fr.umlv.ir3.corba.calculator.impl;
 import java.util.Enumeration;
 
 import opencard.cflex.service.CFlex32CardService;
-import opencard.cflex.util.Util;
 import opencard.core.service.CardRequest;
 import opencard.core.service.CardServiceException;
 import opencard.core.service.SmartCard;
