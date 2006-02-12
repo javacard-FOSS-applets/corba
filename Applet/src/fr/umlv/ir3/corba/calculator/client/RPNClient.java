@@ -6,6 +6,8 @@ package fr.umlv.ir3.corba.calculator.client;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
+import com.sun.java_cup.internal.terminal;
+
 import opencard.cflex.service.CFlex32CardService;
 import opencard.core.service.CardRequest;
 import opencard.core.service.CardServiceException;
@@ -43,18 +45,39 @@ public class RPNClient {
 	//List terminal on the computer
 	CardTerminalRegistry ctr = CardTerminalRegistry.getRegistry();
     
+	CardTerminal terminal=null;
+	SmartCard sm = null;
+	CardRequest cr = null;
+	
 	for (Enumeration terminals = ctr.getCardTerminals();terminals.hasMoreElements();) {
-      CardTerminal terminal = (CardTerminal) terminals.nextElement(); 
+      terminal = (CardTerminal) terminals.nextElement(); 
       int slots = printTerminalInfos(terminal);
       for (int j = 0; j < slots; j++) {
         printSlotInfos(terminal, j);
       }
     }
 
+	if(terminal==null)
+	{
+		throw new NullPointerException("Couldn't not retrieve a card reader");
+	}
+	
 	//Wait for insert card
-    System.out.println("Insert your card ...");
-    CardRequest cr = new CardRequest(CardRequest.ANYCARD, null, null);
-    SmartCard sm = SmartCard.waitForCard(cr);
+    if(terminal.isCardPresent(0)==false)
+    {
+    	System.out.println("Re-insert/Insert your card ...");
+    	cr = new CardRequest(CardRequest.NEWCARD, terminal, null);	
+    }
+    else
+    {
+    	cr = new CardRequest(CardRequest.ANYCARD, terminal, null);
+    }
+    sm = SmartCard.waitForCard(cr);
+    
+    if(sm==null)
+    {
+    	throw new NullPointerException("Error when waiting for card to become ready");
+    }
 
 	//Test application
     CFlex32CardService javacard = (CFlex32CardService) sm.getCardService(
@@ -69,6 +92,7 @@ public class RPNClient {
 		ResponseAPDU res;
 
 		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number1,number1.length));
+		System.out.println(res);
 		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number2,number2.length));
 		System.out.println(res);
       	res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,operator,1));

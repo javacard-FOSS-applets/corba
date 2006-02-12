@@ -101,17 +101,17 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 	//push a number at the top of the stack
 	private void push(APDU apdu){
 		
-		//Retrieve buffer data from the apdu
-		byte buffer[] = apdu.getBuffer();
-		//Retrieve the data from apdu
-		short size = (short)(apdu.setIncomingAndReceive());
-		short index;
-
-		//fill buffer
-		for (index = 0; index < size; index+=2) 
-		{
-			pushStack(BytePairToShort(buffer[(short)(ISO7816.OFFSET_CDATA + index)], buffer[(short)(ISO7816.OFFSET_CDATA + (short)index+(short)1)]));
-		}
+//		//Retrieve buffer data from the apdu
+//		byte buffer[] = apdu.getBuffer();
+//		//Retrieve the data from apdu
+//		short size = (short)(apdu.setIncomingAndReceive());
+//		short index;
+//
+//		//fill buffer
+//		for (index = 0; index < size; index+=2) 
+//		{
+//			pushStack(BytePairToShort(buffer[(short)(ISO7816.OFFSET_CDATA + index)], buffer[(short)(ISO7816.OFFSET_CDATA + (short)index+(short)1)]));
+//		}
 
 		return;
 		
