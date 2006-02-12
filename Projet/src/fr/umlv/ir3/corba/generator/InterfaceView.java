@@ -2,6 +2,7 @@ package fr.umlv.ir3.corba.generator;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 
@@ -78,7 +79,7 @@ public class InterfaceView {
 		{
 			Method m = interfaceMethods.get(i);
 			
-			declarations[i] = m.getName().toUpperCase();  
+			declarations[i] = m.getName();  
 		}
 		
 		return declarations;
@@ -90,6 +91,11 @@ public class InterfaceView {
 	
 	public void setClassPrefix(String classPrefix) {
 		this.classPrefix = classPrefix;
+	}
+	
+	public Iterator getMethodsIterator()
+	{
+		return this.interfaceMethods.iterator();
 	}
 	
 }
