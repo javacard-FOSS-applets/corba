@@ -7,6 +7,5 @@
 	<classpathentry kind="lib" path="lib/base-opt.jar"/>
 	<classpathentry kind="lib" path="lib/api21.jar"/>
 	<classpathentry kind="lib" path="lib/cryptix-jce-provider.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Applet"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
