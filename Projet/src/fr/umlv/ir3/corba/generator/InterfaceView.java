@@ -93,7 +93,7 @@ public class InterfaceView {
 		this.classPrefix = classPrefix;
 	}
 	
-	public Iterator getMethodsIterator()
+	public Iterator<Method> getMethodsIterator()
 	{
 		return this.interfaceMethods.iterator();
 	}
