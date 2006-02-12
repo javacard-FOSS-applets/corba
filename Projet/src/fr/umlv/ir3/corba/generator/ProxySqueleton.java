@@ -80,7 +80,11 @@ public class ProxySqueleton extends AbstractSqueleton {
 		while(iterator.hasNext())
 		{
 			Method method = iterator.next();
-	//		line(method);
+			code.append("public void").append(method.getName()).append("()\n");
+			indentation++;
+			line("{");
+			line("}");
+			indentation--;
 		}
 	}
 
@@ -89,8 +93,7 @@ public class ProxySqueleton extends AbstractSqueleton {
 	 */
 	@Override
 	protected void generateFinalize(StringBuilder code) {
-		// TODO Auto-generated method stub
-
+		line("}");
 	}
 
 	/**
