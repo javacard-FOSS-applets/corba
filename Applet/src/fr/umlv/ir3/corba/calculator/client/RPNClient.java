@@ -17,6 +17,7 @@ import opencard.core.terminal.ResponseAPDU;
 import opencard.core.util.HexString;
 import opencard.core.util.OpenCardPropertyLoadingException;
 import opencard.opt.terminal.ISOCommandAPDU;
+import fr.umlv.ir3.corba.calculator.applet.Util;
 
 public class RPNClient {
 
@@ -59,16 +60,18 @@ public class RPNClient {
     CFlex32CardService javacard = (CFlex32CardService) sm.getCardService(
         CFlex32CardService.class, true);
     javacard.selectApplication(HexString.parseHexString("A00000000201"));
-    byte[] numbers = {10,23};
+    byte[] number1 = Util.ShortToBytePair((short)100);
+    byte[] number2 = Util.ShortToBytePair((short)30);
 	byte[] operator = {'+'};
     try {
 		javacard.allocateChannel();
 
 		ResponseAPDU res;
 
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,numbers,0));
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number1,number1.length));
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number2,number2.length));
 		System.out.println(res);
-      	res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,operator,4));
+      	res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,operator,1));
       	System.out.println(res);
 
       	System.err.println(res.getBuffer()[0]);

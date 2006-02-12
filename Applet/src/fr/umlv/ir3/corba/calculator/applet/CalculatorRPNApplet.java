@@ -1,34 +1,23 @@
 package fr.umlv.ir3.corba.calculator.applet;
 
-
-//	--------------------------------------------------------------------------------
-//  � Copyright Schlumberger Technology Corp. 1999-2002. All Rights Reserved.
-//--------------------------------------------------------------------------------
-//
-//SimpleString.java
-//
-//
-//This card applet allows the user to write a string to the card and
-//read it back.  It provides a simple example of dynamic message
-//resizing (see GetString() method).  The class must store the
-//strings in byte arrays, but a client can easily handle type translation
-//to store strings.
-//
-//This card applet is built on the Skeleton.java file.
-//
-
-
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
 
-
-//Class Definition
-
+/**
+ * Reverse polonish calculator loaded in javacard
+ * This class have 3 command
+ * PUSH : put a short number on the top of the stack
+ * CLEAR : clear the calculator
+ * RESULT : Pass the operation and return the result of both number on the top of the stack
+ * 
+ * @author lbarbisan
+ *
+ */
 public class CalculatorRPNApplet extends javacard.framework.Applet {
 
 	//  This applet is designed to respond to the following
-		//  class of instructions.
+	//  class of instructions.
 
 	final static byte CalculatorApplet_CLA = (byte)0x86;
 
@@ -119,9 +108,9 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 		short index;
 
 		//fill buffer
-		for (index = 0; index < size; index++) 
+		for (index = 0; index < size; index+=2) 
 		{
-			pushStack(buffer[(short)(ISO7816.OFFSET_CDATA + index)]);
+			pushStack(BytePairToShort(buffer[(short)(ISO7816.OFFSET_CDATA + index)], buffer[(short)(ISO7816.OFFSET_CDATA + (short)index+(short)1)]));
 		}
 
 		return;
@@ -152,45 +141,48 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 			right=popStack();
 			pushStack(
 				calculate(
-					buffer[(short)(ISO7816.OFFSET_CDATA + index)],
+					buffer[(byte)(ISO7816.OFFSET_CDATA + index)],
 						left,
-					right
+						right
 					)
 				);
 		}
 		
 		//Send Result
 		apdu.setOutgoing();
-		apdu.setOutgoingLength((byte)1);
+		apdu.setOutgoingLength((byte)2);
 		
-		buffer[0] = (byte)popStack();
+		byte[] sendBuffer = ShortToBytePair(popStack());
+		
+		buffer[0] = sendBuffer[0];
+		buffer[1] = sendBuffer[1];
 
-		apdu.sendBytes((short)0,(short)1);
+		apdu.sendBytes((short)0,(short)2);
 
 		return;
 		
 	}
 
-	private short calculate(short operator, short left, short right) 
+	private short calculate(byte operator, short left, short right) 
 	{
 		short result;
 
 		switch(operator)
 		{
-			case '+':
+			case (byte)'+':
 				result=(short)((short)left+(short)right);
 				break;
-			case '-':
+			case (byte)'-':
 				result=(short)((short)left-(short)right);
 				break;
-			case '/':
+			case (byte)'/':
 				result=(short)((short)left/(short)right);
 				break;
-			case '*':
+			case (byte)'*':
 				result=(short)((short)left*(short)right);				
 				break;
 			default:
-				//todo : throws exception
+				ISOException.throwIt(ISO7816.SW_NO_ERROR);
 				result=0;
 		}
 		return result;
@@ -205,7 +197,7 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 		}
 		else
 		{
-		//todo : throws exception
+			 ISOException.throwIt(ISO7816.SW_NO_ERROR);
 		}
 	}
 	
@@ -215,15 +207,15 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 		{
 			return stackBuffer[(short)cursor--];
 		}
-		//todo : throws exception
+		ISOException.throwIt(ISO7816.SW_NO_ERROR);
 		return 0;
 	}
 
 	private boolean isEmptyStack()
 	{
 		if(cursor<=(short)0)
-		{
-			cursor=(byte)0;
+		{byte
+			cursor=(short)0;
 			return true;
 		}
 		return false;
