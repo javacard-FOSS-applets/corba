@@ -22,14 +22,14 @@ public class InterfaceView {
 	
 	private byte applet_CLA;
 	
-	public InterfaceView(ArrayList<Method> methods,byte appletID,String prefix)
+	public InterfaceView(ArrayList<Method> methods,String AppletID,String PackageID,  byte appletCLA, String prefix)
 	{
 		this.interfaceMethods = methods;
 		this.instructionsNumber = new int [this.interfaceMethods.size()];
 		generateInstructionNumbers();
 		
 		this.classPrefix = prefix;
-		this.applet_CLA = appletID; 
+		this.applet_CLA = appletCLA; 
 	}
 	
 	/**
