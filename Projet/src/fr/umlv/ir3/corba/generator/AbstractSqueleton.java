@@ -119,6 +119,4 @@ public abstract class AbstractSqueleton
 		else
 			return path+"/";
 	}
-	
-	
 }

@@ -35,10 +35,6 @@ public class ProxySqueleton extends AbstractSqueleton {
 		return null;
 	}
 
-	private void line(String line) {
-		code.append(indent(indentation)).append(line).append("\n");
-	}
-
 	/**
 	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
 	 */
@@ -66,6 +62,12 @@ public class ProxySqueleton extends AbstractSqueleton {
 		line("import fr.umlv.ir3.corba.calculator.InitializationException;");
 		line("import fr.umlv.ir3.corba.calculator.InvalidOperator;");
 		line("import fr.umlv.ir3.corba.calculator.StackOverFlow;");
+		line("");
+		line("/**");
+		line(" * This class provides an implementation of servant corba object using a");
+		line(" * distant calculator applet in card terminal");
+		line(" */");
+		code.append("public class ").append(setName()).append("Impl extends ").append(setName()).append("POA{");
 		indentation--;
 	}
 
@@ -83,6 +85,7 @@ public class ProxySqueleton extends AbstractSqueleton {
 			code.append("public void").append(method.getName()).append("()\n");
 			indentation++;
 			line("{");
+			line("sendCommand(PUSH,(byte)number);");
 			line("}");
 			indentation--;
 		}
@@ -101,228 +104,170 @@ public class ProxySqueleton extends AbstractSqueleton {
 	 */
 	@Override
 	protected void generateInitialize(StringBuilder code) {
-		// TODO Auto-generated method stub
+		line(" // This applet is designed to respond to the following");
+		line(" // class of instructions.");
+		line(" final static byte CalculatorApplet_CLA = (byte)0x86;");
+		line("");
+		line(" // Instruction set for CalculatorApplet");
+		line(" final static byte PUSH = (byte)0x10;");
+		line(" final static byte POP = (byte) 0x20;");
+		line(" final static byte RESULT = (byte)0x30;");
+		line(" final static byte CLEAR = (byte) 0x40;");
+		line("");
+		line(" //TODO: Ca s'appelle comment ce truc ? ;-)");
+		line(" private CFlex32CardService javacard;");
+		line("");
+		line(" private CardTerminal terminal=null;");
+		line(" private SmartCard sm = null;");
+		line(" private CardRequest cr = null;");
+		line("");
+		line("");
+		line(" /**");
+		line(" * TODO: completer les exceptions");
+		line(" * Constructs an instance of calculator applet client by initializing Java");
+		line(" Card access service");
+		line(" * This method initializes javacard terminal access");
+		line(" * @throws ClassNotFoundException ?");
+		line(" * @throws CardTerminalException ?");
+		line(" * @throws CardServiceException ?");
+		line(" * @throws OpenCardPropertyLoadingException ?");
+		line(" */");
+		line(" public CalculatorImpl() throws OpenCardPropertyLoadingException,");
+		line(" CardServiceException, CardTerminalException, ClassNotFoundException{");
+		line(" super();");
+		line(" initTerminal();");
+		line(" }");
+		line("");
+		line(" /**");
+		line(" * TODO: completer les exceptions");
+		line(" * Initializes javacard card access");
+		line(" * @param appletId - id of applet in the Java card");
+		line(" * @throws ClassNotFoundException ?");
+		line(" * @throws CardTerminalException ?");
+		line(" * @throws CardServiceException ?");
+		line(" * @throws OpenCardPropertyLoadingException ?");
+		line(" */");
+		line(" public void initCardAccess(String appletId) throws CardTerminalException,");
+		line(" CardServiceException, ClassNotFoundException,");
+		line(" OpenCardPropertyLoadingException{");
+		line(" //Wait for insert card");
+		line(" if(terminal.isCardPresent(0)==false)");
+		line(" {");
+		line(" System.out.println(\"Re-insert/Insert your card ...\");");
+		line(" cr = new CardRequest(CardRequest.NEWCARD, terminal, null);");
+		line(" }");
+		line(" else");
+		line(" {");
+		line(" cr = new CardRequest(CardRequest.ANYCARD, terminal, null);");
+		line(" }");
+		line(" sm = SmartCard.waitForCard(cr);");
+		line("");
+		line(" if(sm==null)");
+		line(" {");
+		line(" throw new NullPointerException(\"Error when waiting for card to become ready\"");
+		line(" }");
+		line("");
+		line(" //Test application");
+		line(" javacard = (CFlex32CardService)");
+		line(" sm.getCardService(CFlex32CardService.class, true);");
+		line(" javacard.selectApplication(HexString.parseHexString(\"A00000000201\"));");
+		line("");
+		line(" javacard.allocateChannel();");
+		line("");
+		line(" //Start card service");
+		line(" if (!SmartCard.isStarted()) {");
+		line(" SmartCard.start();");
+		line(" }");
+		line("");
+		line(" //DEBUG: List terminal on the computer");
+		line(" printDebug(CardTerminalRegistry.getRegistry());");
+		line(" }");
+		line("");
+		line(" /**");
+		line(" * Closes access applet channel");
+		line(" */");
+		line(" public void closeCardAccess(){");
+		line(" javacard.releaseChannel();");
+		line(" }");
+		line(" /************************************************ Private methods");
+		line(" *******************************************************************/");
+		line(" private void initTerminal() throws OpenCardPropertyLoadingException,");
+		line(" CardServiceException, CardTerminalException, ClassNotFoundException{");
+		line("");
+		line(" //Try to starrt service");
+		line(" if (SmartCard.isStarted() == false) {");
+		line(" SmartCard.start();");
+		line(" }");
+		line("");
+		line(" //List terminal on the computer");
+		line(" CardTerminalRegistry ctr = CardTerminalRegistry.getRegistry();");
+		line("");
+		line(" for (Enumeration terminals =");
+		line(" ctr.getCardTerminals();terminals.hasMoreElements();) {");
+		line(" terminal = (CardTerminal) terminals.nextElement();");
+		line(" //TODO : Trouver une solution pous élégante");
+		line(" }");
+		line("");
+		line(" if(terminal==null)");
+		line(" {");
+		line(" //TODO : Remonter les exception correctement");
+		line(" throw new NullPointerException(\"Couldn't not retrieve a card reader\");");
+		line(" }");
+		line(" }");
+		line("");
+		line(" private void printDebug(CardTerminalRegistry ctr ) {");
+		line(" for (Enumeration terminals =");
+		line(" ctr.getCardTerminals();terminals.hasMoreElements();) {");
+		line(" CardTerminal terminal = (CardTerminal) terminals.nextElement();");
+		line(" int slots = terminal.getSlots();");
+		line(" System.err.println(\"Address: \" + terminal.getAddress() + \"\\n\" + \"Name: \"");
+		line(" + terminal.getName() + \"\\n\" + \"Type: \" + terminal.getType() + \"\\n\"");
+		line(" + \"Slots: \" + terminal.getSlots() + \"\\n\");");
+		line(" for (int aSlotID = 0; aSlotID < slots; aSlotID++) {");
+		line(" try {");
+		line(" // First print the ID of the slot");
+		line(" System.err.println(\"Info for slot ID: \" + aSlotID);");
+		line(" if (terminal.isCardPresent(aSlotID)) {");
+		line(" System.err.println(\"card present: yes\");");
+		line(" // If there is a card in the slot print the ATR the OCF got form this");
+		line(" // card");
+		line(" System.err.println(\"ATR: \"");
+		line(" + HexString.hexify(terminal.getCardID(aSlotID).getATR()));");
+		line(" // As we do not have a driver for this card we cannot interpret this ATR");
+		line(" } else");
+		line(" System.err.println(\"card present: no\");");
+		line(" } catch (CardTerminalException e) {");
+		line(" e.printStackTrace();");
+		line(" }");
+		line(" }");
+		line(" }");
+		line(" }");
+		line("");
+		line(" private ResponseAPDU sendCommand(byte command, byte value) throws");
+		line(" CardTerminalException, InitializationException{");
+		line(" byte[] values = new byte[1];");
+		line(" values[0] = value;");
+		line(" return javacard.sendAPDU(new");
+		line(" ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,values,values.length));");
+		line(" }");
+		line("");
+		line(" private ResponseAPDU sendCommand(byte command) throws");
+		line(" CardTerminalException, InitializationException{");
+		line(" return javacard.sendAPDU(new");
+		line(" ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,new");
+		line(" byte[0],0));");
+		line("    }");
+		line("}");
 
 	}
+		
+	/**
+	 * Add a line into code StringBuilder
+	 * @param line line to add in code
+	 */
+	private void line(String line) {
+		code.append(indent(indentation)).append(line).append("\n");
+	}
 
-	//
-	// /**
-	// * This class provides an implementation of servant corba object using a
-	// distant calculator applet in card terminal
-	// * @author BARBISAN Laurent, BOITEL Olivier, GUILLON Denis, LAMPS
-	// S�bastien
-	// */
-	//
-	// public class CalculatorImpl extends AppletCalculatorPOA{
-	// // This applet is designed to respond to the following
-	// // class of instructions.
-	// final static byte CalculatorApplet_CLA = (byte)0x86;
-	//
-	// // Instruction set for CalculatorApplet
-	// final static byte PUSH = (byte)0x10;
-	// final static byte POP = (byte) 0x20;
-	// final static byte RESULT = (byte)0x30;
-	// final static byte CLEAR = (byte) 0x40;
-	//		
-	// //TODO: Ca s'appelle comment ce truc ? ;-)
-	// private CFlex32CardService javacard;
-	//		
-	// private CardTerminal terminal=null;
-	// private SmartCard sm = null;
-	// private CardRequest cr = null;
-	//		
-	//		
-	// /**
-	// * TODO: completer les exceptions
-	// * Constructs an instance of calculator applet client by initializing Java
-	// Card access service
-	// * This method initializes javacard terminal access
-	// * @throws ClassNotFoundException ?
-	// * @throws CardTerminalException ?
-	// * @throws CardServiceException ?
-	// * @throws OpenCardPropertyLoadingException ?
-	// */
-	// public CalculatorImpl() throws OpenCardPropertyLoadingException,
-	// CardServiceException, CardTerminalException, ClassNotFoundException{
-	// super();
-	// initTerminal();
-	// }
-	//	    
-	// /**
-	// * TODO: completer les exceptions
-	// * Initializes javacard card access
-	// * @param appletId - id of applet in the Java card
-	// * @throws ClassNotFoundException ?
-	// * @throws CardTerminalException ?
-	// * @throws CardServiceException ?
-	// * @throws OpenCardPropertyLoadingException ?
-	// */
-	// public void initCardAccess(String appletId) throws CardTerminalException,
-	// CardServiceException, ClassNotFoundException,
-	// OpenCardPropertyLoadingException{
-	// //Wait for insert card
-	// if(terminal.isCardPresent(0)==false)
-	// {
-	// System.out.println("Re-insert/Insert your card ...");
-	// cr = new CardRequest(CardRequest.NEWCARD, terminal, null);
-	// }
-	// else
-	// {
-	// cr = new CardRequest(CardRequest.ANYCARD, terminal, null);
-	// }
-	// sm = SmartCard.waitForCard(cr);
-	//	        
-	// if(sm==null)
-	// {
-	// throw new NullPointerException("Error when waiting for card to become
-	// ready");
-	// }
-	//
-	// //Test application
-	// javacard = (CFlex32CardService)
-	// sm.getCardService(CFlex32CardService.class, true);
-	// javacard.selectApplication(HexString.parseHexString("A00000000201"));
-	//	        
-	// javacard.allocateChannel();
-	//
-	//	    	
-	// //Start card service
-	// if (!SmartCard.isStarted()) {
-	// SmartCard.start();
-	// }
-	//	        
-	// //DEBUG: List terminal on the computer
-	// printDebug(CardTerminalRegistry.getRegistry());
-	// }
-	//	    
-	// /**
-	// * Closes access applet channel
-	// */
-	// public void closeCardAccess(){
-	// javacard.releaseChannel();
-	// }
-	//	    
-	// /**
-	// * Sends a result request to the calculator applet
-	// * @return a short representing response to result request of calculator
-	// applet
-	// * @throws InvalidOperator - input operator incorrect, means not +,-,*,/
-	// * @throws CardException - error in using card terminal
-	// * @throws InitializationException - error if Java card access is not
-	// initialized
-	// */
-	// public short result(char operator) throws InvalidOperator, CardException,
-	// InitializationException{
-	// try {
-	// //Send APDU trame to applet
-	// ResponseAPDU res = sendCommand(RESULT,(byte)operator);
-	// //TODO: verifier la bonne utilisation du traitement des reponses
-	// return res.data()[0];
-	// } catch (CardTerminalException e) {
-	// throw new CardException(e.getMessage());
-	// }
-	// }
-	//
-	// /**
-	// * Sends a operand depository to the calculator applet
-	// * @throws InvalidOperator - input operator incorrect, means not +,-,*,/
-	// * @throws CardException - error in using card terminal
-	// * @throws InitializationException - error if Java card access is not
-	// initialized
-	// */
-	// public void addNumber(short number) throws StackOverFlow, CardException,
-	// InitializationException {
-	// try {
-	// //Send APDU trame to applet
-	// sendCommand(PUSH,(byte)number);
-	// } catch (CardTerminalException e) {
-	// throw new CardException(e.getMessage());
-	// }
-	// }
-	//
-	// /**
-	// * Sends a clear request to the calculator applet
-	// * @throws CardException - error in using card terminal
-	// * @throws InitializationException - error if Java card access is not
-	// initialized
-	// */
-	// public void clear() throws InitializationException, CardException {
-	// try {
-	// //Send APDU trame to applet
-	// sendCommand(CLEAR);
-	// } catch (CardTerminalException e) {
-	// throw new CardException(e.getMessage());
-	// }
-	// }
-	//	    
-	// /************************************************ Private methods
-	// *******************************************************************/
-	// private void initTerminal() throws OpenCardPropertyLoadingException,
-	// CardServiceException, CardTerminalException, ClassNotFoundException{
-	//	        
-	// //Try to starrt service
-	// if (SmartCard.isStarted() == false) {
-	// SmartCard.start();
-	// }
-	//	        
-	// //List terminal on the computer
-	// CardTerminalRegistry ctr = CardTerminalRegistry.getRegistry();
-	//	            	
-	// for (Enumeration terminals =
-	// ctr.getCardTerminals();terminals.hasMoreElements();) {
-	// terminal = (CardTerminal) terminals.nextElement();
-	// //TODO : Trouver une solution pous élégante
-	// }
-	//
-	// if(terminal==null)
-	// {
-	// //TODO : Remonter les exception correctement
-	// throw new NullPointerException("Couldn't not retrieve a card reader");
-	// }
-	// }
-	//	    
-	// private void printDebug(CardTerminalRegistry ctr ) {
-	// for (Enumeration terminals =
-	// ctr.getCardTerminals();terminals.hasMoreElements();) {
-	// CardTerminal terminal = (CardTerminal) terminals.nextElement();
-	// int slots = terminal.getSlots();
-	// System.err.println("Address: " + terminal.getAddress() + "\n" + "Name: "
-	// + terminal.getName() + "\n" + "Type: " + terminal.getType() + "\n"
-	// + "Slots: " + terminal.getSlots() + "\n");
-	// for (int aSlotID = 0; aSlotID < slots; aSlotID++) {
-	// try {
-	// // First print the ID of the slot
-	// System.err.println("Info for slot ID: " + aSlotID);
-	// if (terminal.isCardPresent(aSlotID)) {
-	// System.err.println("card present: yes");
-	// // If there is a card in the slot print the ATR the OCF got form this
-	// // card
-	// System.err.println("ATR: "
-	// + HexString.hexify(terminal.getCardID(aSlotID).getATR()));
-	// // As we do not have a driver for this card we cannot interpret this ATR
-	// } else
-	// System.err.println("card present: no");
-	// } catch (CardTerminalException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// }
-	//	    
-	// private ResponseAPDU sendCommand(byte command, byte value) throws
-	// CardTerminalException, InitializationException{
-	// byte[] values = new byte[1];
-	// values[0] = value;
-	// return javacard.sendAPDU(new
-	// ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,values,values.length));
-	// }
-	//	    
-	// private ResponseAPDU sendCommand(byte command) throws
-	// CardTerminalException, InitializationException{
-	// return javacard.sendAPDU(new
-	// ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,new
-	// byte[0],0));
-	//	    }
-	//	}
 
 }
