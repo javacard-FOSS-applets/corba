@@ -8,6 +8,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			Generator generator = new Generator("fr.umlv.ir3.corba.calculator.AppletCalculatorOperations");
+			GeneratorUI generatorUI = new GeneratorUI(generator);
 			Method[] m = generator.getOperationsMethod();
 			for(int i=0;i<m.length;i++){
 				System.out.println("affichage methode" + m[i]);

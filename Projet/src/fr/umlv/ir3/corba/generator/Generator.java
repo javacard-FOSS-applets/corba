@@ -55,7 +55,7 @@ public class Generator {
 		if(file==null) throw new ClassNotFoundException("Attribute class is missing");
 		return file.getName();
 	}
-	
+
 	public Method[] getOperationsMethod() {
 		Method[] methods = this.file.getMethods();
 		return methods;

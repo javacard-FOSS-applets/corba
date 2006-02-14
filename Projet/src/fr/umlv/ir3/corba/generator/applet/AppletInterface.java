@@ -1,4 +1,4 @@
-package fr.umlv.ir3.corba.generator;
+package fr.umlv.ir3.corba.generator.applet;
 
 /**
  * 

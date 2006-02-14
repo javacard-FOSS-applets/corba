@@ -1,7 +1,10 @@
-package fr.umlv.ir3.corba.generator;
+package fr.umlv.ir3.corba.generator.proxy;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;
+
+import fr.umlv.ir3.corba.generator.AbstractSqueleton;
+import fr.umlv.ir3.corba.generator.InterfaceView;
 
 /**
  * This Squeleteton is used to generate access to Applet, for each method it
@@ -82,13 +85,9 @@ public class ProxySqueleton extends AbstractSqueleton {
 		while(iterator.hasNext())
 		{
 			Method method = iterator.next();
-			code.append("public void").append(method.getName()).append("()\n");
-			indentation++;
-			line("{");
-			line("sendCommand(PUSH,(byte)number);");
-			line("}");
-			indentation--;
+			code.append(CodeMethodsFactory.createCodeMethodsFactory().generateMethodCode(method));
 		}
+		indentation--;
 	}
 
 	/**

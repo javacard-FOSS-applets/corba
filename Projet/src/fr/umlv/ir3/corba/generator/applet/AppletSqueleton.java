@@ -1,4 +1,7 @@
-package fr.umlv.ir3.corba.generator;
+package fr.umlv.ir3.corba.generator.applet;
+
+import fr.umlv.ir3.corba.generator.AbstractSqueleton;
+import fr.umlv.ir3.corba.generator.InterfaceView;
 
 
 public class AppletSqueleton extends AbstractSqueleton implements AppletInterface
@@ -16,7 +19,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.AppletInterface#generateProcessMethod()
+	 * @see fr.umlv.ir3.corba.generator.applet.AppletInterface#generateProcessMethod()
 	 */
 	public String generateProcessMethod() 
 	{
@@ -48,7 +51,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.AppletInterface#generateInstallMethod()
+	 * @see fr.umlv.ir3.corba.generator.applet.AppletInterface#generateInstallMethod()
 	 */
 	public String generateInstallMethod() 
 	{	
@@ -56,7 +59,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.AppletInterface#generateSelectMethod()
+	 * @see fr.umlv.ir3.corba.generator.applet.AppletInterface#generateSelectMethod()
 	 */
 	public String generateSelectMethod() 
 	{
