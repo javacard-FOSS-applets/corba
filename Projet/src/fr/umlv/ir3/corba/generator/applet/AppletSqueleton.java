@@ -97,6 +97,21 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 		
 	}
 	
+	
+	/**
+	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateInitialize(java.lang.StringBuilder)
+	 */
+	@Override
+	protected void generateInitialize(StringBuilder code) 
+	{
+		
+		
+		// les methodes obligatoire de l'applet 
+		code.append(generateInstallMethod())
+		.append(generateSelectMethod())
+		.append(generateProcessMethod());
+	}
+	
 	/**
 	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateFinalize(java.lang.StringBuilder)
 	 */
@@ -105,13 +120,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	
 	}
 	
-	/**
-	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateInitialize(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateInitialize(StringBuilder code) {
-		
-	}
+	
 	
 	
 }
