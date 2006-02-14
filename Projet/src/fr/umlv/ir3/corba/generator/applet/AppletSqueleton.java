@@ -45,7 +45,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 		
 		sb.append(indent(1)).append("default :\n")
 		.append("ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);\n")
-		.append("}");
+		.append("}\n");
 		
 		return sb.toString();
 	}
@@ -55,7 +55,15 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	 */
 	public String generateInstallMethod() 
 	{	
-		return null;
+
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("public static void install(byte buffer[],short offset,byte length) {\n")
+		.append(indent(1)).append("new").append(this.className).append("(buffer, offset, length);\n")
+		.append("}\n");
+		
+		return sb.toString();
+
 	}
 	
 	/**
@@ -63,7 +71,13 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	 */
 	public String generateSelectMethod() 
 	{
-		return null;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("public boolean select() {\n")
+		.append(indent(1)).append("return true;\n")
+		.append("}\n");
+		
+		return sb.toString();
 	}
 	
 	/**
@@ -72,7 +86,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	@Override
 	protected void generateStartClass(StringBuilder code) {
 		//TODO : ajouter les import
-		code.append("public class "+ this.className + "extends javacard.framework.Applet {");
+		code.append("public class "+ this.className + "extends javacard.framework.Applet {\n");
 	}
 	
 	/**
@@ -96,11 +110,6 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	 */
 	@Override
 	protected void generateInitialize(StringBuilder code) {
-		
-	}
-	
-	
-	public static void main(String[] args) {
 		
 	}
 	
