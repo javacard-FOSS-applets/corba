@@ -105,7 +105,15 @@ public static void main(String[] args) throws CardTerminalException, OpenCardPro
 		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
 		number[0] = (byte)((short)3);
 		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
-		number[0] = (byte)('*');
+		number[0] = (byte)((short)2);
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
+		number[0] = (byte)((short)3);
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
+		number[0] = (byte)('+');
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,number,1));
+		number[0] = (byte)('+');
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,number,1));
+		number[0] = (byte)('+');
 		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,number,1));
       	System.out.println("Result : " + (short)res.getBuffer()[0]);
     } finally {
