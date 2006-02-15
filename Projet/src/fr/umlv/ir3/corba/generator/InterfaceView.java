@@ -1,8 +1,8 @@
 package fr.umlv.ir3.corba.generator;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * 
@@ -13,8 +13,8 @@ import java.util.Iterator;
  */
 public class InterfaceView {
 	
-//	liste des methodes de l'interface IDL
-	private ArrayList<Method> interfaceMethods;
+	// liste des methodes de l'interface IDL
+	private List<Method> interfaceMethods;
 	// liste des numeros d'instructions correspondant aux methodes
 	private int [] instructionsNumber;
 	
@@ -22,7 +22,17 @@ public class InterfaceView {
 	
 	private byte applet_CLA;
 	
-	public InterfaceView(ArrayList<Method> methods,String AppletID,String PackageID,  byte appletCLA, String prefix)
+	/**
+	 * Constructor, this constructor must be bulid ton construct object
+	 * @param methods list of the method interface from java interface
+	 * @param AppletID appletID for the javacard ie A00000000201, it must include PackageID (here A000000002)
+	 * @param PackageID packageID for the javacard A0000000002
+	 * @param appletCLA CLA for the javacard (ie 0x86)
+	 *
+	 * @param prefix ?
+	 */
+	//TODO : lbarbisan - A quoi sert l'argument prefix 
+	public InterfaceView(List<Method> methods, String AppletID, String PackageID,  byte appletCLA, String prefix)
 	{
 		this.interfaceMethods = methods;
 		this.instructionsNumber = new int [this.interfaceMethods.size()];

@@ -8,8 +8,17 @@ import fr.umlv.ir3.corba.generator.InterfaceView;
 
 /**
  * This Squeleteton is used to generate access to Applet, for each method it
- * create associated method
+ * create associated method.
+ * this class define a protocle use to send data and receive data in apdu like this :
+ * <b>Send Packet</b>
+ * The send send packet is decomposed in arguments :
+ * byte : contain only the value
+ * byte array : contain 1 byte : Lentgth of array, N byte
  * 
+ *  <b>Receive Packet</b>
+ *  8 bit[1 byte]: N :length of return value
+ *  N*8 : Data of argument
+ *  
  * @author lbarbisan
  * 
  */

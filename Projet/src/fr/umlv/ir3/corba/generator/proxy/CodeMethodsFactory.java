@@ -36,6 +36,21 @@ public class CodeMethodsFactory {
 	 */
 	public String generateMethodCode(Method method)
 	{
-		return "public void method(){}";
-	}		
+		StringBuilder code = new StringBuilder();
+		code.append("private ").append(method.getName());
+		//.append(method.)
+		return null;
+		
+	}
+	
+	
+	/**
+	 * Generate arguents for spcfied method
+	 * @param method method
+	 * @return return the string code represent arguments
+	 */
+	private String generateArgument(Method method)
+	{
+		return null;
+	}
 }
