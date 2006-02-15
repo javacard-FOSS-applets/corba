@@ -4,6 +4,7 @@
 package fr.umlv.ir3.corba.generator.squeleton.proxy;
 
 import fr.umlv.ir3.corba.generator.GeneratorInterface;
+import fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton;
 
 /**
  * @author lbarbisan
@@ -16,7 +17,6 @@ public class ClientSqueleton extends AbstractFreeMarkerSqueleton {
 	 */
 	public ClientSqueleton(GeneratorInterface squeletonInterface) {
 		super(squeletonInterface);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -34,30 +34,15 @@ public class ClientSqueleton extends AbstractFreeMarkerSqueleton {
 		return generatorInterface.getJavaInterface().getPackage().getName() + ".client";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
 	 */
 	@Override
-	protected void generateStartClass(StringBuilder code) {
-		// TODO Auto-generated method stub
+	protected void generateStartClass(StringBuilder code) {}
 
-	}
-
-	/* (non-Javadoc)
+	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
 	 */
 	@Override
-	protected void generateMethods(StringBuilder code) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateFinalize(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateFinalize(StringBuilder code) {
-		// TODO Auto-generated method stub
-
-	}
+	protected void generateMethods(StringBuilder code) {}
 }

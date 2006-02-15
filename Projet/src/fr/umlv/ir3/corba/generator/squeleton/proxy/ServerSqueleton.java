@@ -6,6 +6,7 @@ package fr.umlv.ir3.corba.generator.squeleton.proxy;
 import java.util.List;
 
 import fr.umlv.ir3.corba.generator.GeneratorInterface;
+import fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton;
 
 /**
  * @author lbarbisan
@@ -37,7 +38,7 @@ public class ServerSqueleton extends AbstractFreeMarkerSqueleton{
 		return generatorInterface.getJavaInterface().getPackage().getName() + ".server";
 	}
 	/**
-	 * @see fr.umlv.ir3.corba.generator.squeleton.proxy.AbstractFreeMarkerSqueleton#generateInitialize(java.lang.StringBuilder)
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton#generateInitialize(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void generateInitialize(StringBuilder code) {

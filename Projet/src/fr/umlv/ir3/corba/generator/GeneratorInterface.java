@@ -1,8 +1,6 @@
 package fr.umlv.ir3.corba.generator;
 
 import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * 
@@ -95,13 +93,6 @@ public class GeneratorInterface {
 		return declarations;
 	}
 	
-	public String getClassPrefix() {
-		return classPrefix;
-	}
-	
-	public void setClassPrefix(String classPrefix) {
-		this.classPrefix = classPrefix;
-	}
 	
 	/**
 	 * @return Returns the javaInterface.
@@ -109,12 +100,37 @@ public class GeneratorInterface {
 	public Class getJavaInterface() {
 		return javaInterface;
 	}
-
 	/**
 	 * @return Returns the applet_CLA.
 	 */
 	public byte getApplet_CLA() {
 		return applet_CLA;
 	}
-	
+	/**
+	 * @return Returns the classPrefix.
+	 */
+	public String getClassPrefix() {
+		return classPrefix;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Class#getDeclaredMethods()
+	 */
+	public Method[] getDeclaredMethods() throws SecurityException {
+		return javaInterface.getDeclaredMethods();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Class#getPackage()
+	 */
+	public Package getPackage() {
+		return javaInterface.getPackage();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Class#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return javaInterface.getSimpleName();
+	}
 }

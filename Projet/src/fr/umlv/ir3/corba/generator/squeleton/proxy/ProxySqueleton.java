@@ -1,6 +1,7 @@
 package fr.umlv.ir3.corba.generator.squeleton.proxy;
 
 import fr.umlv.ir3.corba.generator.GeneratorInterface;
+import fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton;
 
 /**
  * This Squeleteton is used to generate access to Applet, for each method it
@@ -45,16 +46,10 @@ public class ProxySqueleton extends AbstractFreeMarkerSqueleton {
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
 	 */
 	@Override
-	protected void generateStartClass(StringBuilder code) {
-		// TODO Auto-generated method stub
-		
-	}
+	protected void generateStartClass(StringBuilder code) {}
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
 	 */
 	@Override
-	protected void generateMethods(StringBuilder code) {
-		// TODO Auto-generated method stub
-		
-	}
+	protected void generateMethods(StringBuilder code) {}
 }

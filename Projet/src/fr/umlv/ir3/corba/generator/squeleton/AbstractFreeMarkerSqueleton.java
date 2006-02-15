@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.umlv.ir3.corba.generator.squeleton.proxy;
+package fr.umlv.ir3.corba.generator.squeleton;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.umlv.ir3.corba.generator.GeneratorInterface;
-import fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton;
 import fr.umlv.ir3.corba.resources.Resources;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -41,8 +40,7 @@ public abstract class AbstractFreeMarkerSqueleton extends AbstractSqueleton {
 	@Override
 	protected void generateInitialize(StringBuilder code) {
 		initFreeMarker();
-		root.put("interface", generatorInterface.getJavaInterface());
-		root.put("appletParameters", generatorInterface);
+		root.put("interface", generatorInterface);
 	}
 	
 	/**

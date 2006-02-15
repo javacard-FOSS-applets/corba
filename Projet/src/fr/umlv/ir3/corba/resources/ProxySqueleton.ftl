@@ -26,7 +26,7 @@ import fr.umlv.ir3.corba.calculator.StackOverFlow;
 public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
 	//This applet is designed to respond to the following
 	//class of instructions.
-	final static byte ${interface.simpleName}Applet_CLA = (byte)${appletParameters.applet_CLA};
+	final static byte ${interface.simpleName}Applet_CLA = (byte)${interface.applet_CLA};
 	
 	//Instruction set for ${interface.simpleName}Applet
 	<#list interface.getDeclaredMethods() as method>
@@ -44,14 +44,14 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
 	
     /**
      * //TODO: completer les exceptions
-     * Constructs an instance of calculator applet client by initializing Java Card access service
+     * Constructs an instance of ${interface.simpleName} applet client by initializing Java Card access service
      * This method initializes javacard terminal access
      * @throws ClassNotFoundException ?
      * @throws CardTerminalException ?
      * @throws CardServiceException ?
      * @throws OpenCardPropertyLoadingException ?
      */
-	public CalculatorImpl() throws OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException{
+	public ${interface.simpleName}Impl() throws OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException{
 		super();
         initTerminal();
 	}
@@ -132,10 +132,10 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
     private ResponseAPDU sendCommand(byte command, byte value) throws CardTerminalException, InitializationException{
         byte[] values = new byte[1];
         values[0] = value;
-    	return javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,values,values.length));
+    	return javacard.sendAPDU(new ISOCommandAPDU(${interface.simpleName}_CLA,command,(byte)0,(byte)0,values,values.length));
     }
     
     private ResponseAPDU sendCommand(byte command) throws CardTerminalException, InitializationException{
-    	return javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,new byte[0],0));
+    	return javacard.sendAPDU(new ISOCommandAPDU(${interface.simpleName}_CLA,command,(byte)0,(byte)0,new byte[0],0));
     }
 }
