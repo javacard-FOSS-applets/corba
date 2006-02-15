@@ -12,6 +12,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * Graphical interface for generator
+ * @author lbarbisan
+ *
+ */
 public class GeneratorUI {
 	private static final long serialVersionUID = 1L;
 	private final Generator generator;
@@ -20,6 +25,10 @@ public class GeneratorUI {
 	private JFrame window;
 	private JTextField pathField;
 	
+	/**
+	 * Create the user interface for spcecified generator
+	 * @param generator generator to used
+	 */
 	public GeneratorUI(final Generator generator) {
 		this.generator = generator;
 		window = new JFrame();

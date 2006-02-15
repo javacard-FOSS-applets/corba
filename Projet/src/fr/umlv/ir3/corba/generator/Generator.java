@@ -1,10 +1,7 @@
 package fr.umlv.ir3.corba.generator;
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import fr.umlv.ir3.corba.generator.squeleton.proxy.ClientSqueleton;
 import fr.umlv.ir3.corba.generator.squeleton.proxy.ProxySqueleton;

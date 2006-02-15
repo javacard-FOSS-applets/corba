@@ -42,15 +42,14 @@ public class CodeMethodsFactory {
 		return null;
 		
 	}
-	
-	
-	/**
-	 * Generate arguents for spcfied method
-	 * @param method method
-	 * @return return the string code represent arguments
-	 */
-	private String generateArgument(Method method)
-	{
-		return null;
-	}
+		
+//	/**
+//	 * Generate arguents for spcfied method
+//	 * @param method method
+//	 * @return return the string code represent arguments
+//	 */
+//	private String generateArgument(Method method)
+//	{
+//		return null;
+//	}
 }

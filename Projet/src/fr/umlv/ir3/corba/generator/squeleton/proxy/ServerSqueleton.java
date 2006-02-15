@@ -16,7 +16,8 @@ public class ServerSqueleton extends AbstractFreeMarkerSqueleton{
 	private List<GeneratorInterface> generatorInterfaces; 
 	
 	/**
-	 * @param squeletonInterface
+	 * Constructor
+	 * @param generatorInterfaces list of interfaces that will be managed by the server
 	 */
 	public ServerSqueleton(List<GeneratorInterface> generatorInterfaces) {
 		super(generatorInterfaces.get(0));

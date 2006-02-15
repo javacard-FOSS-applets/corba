@@ -77,6 +77,10 @@ public class GeneratorInterface {
 		return declarations;
 	}
 	
+	/**
+	 * return the instruction name for javacard
+	 * @return list of instruction names
+	 */
 	public String[] getInstructionNames()
 	{
 		int nbMethods = javaInterface.getDeclaredMethods().length;
@@ -113,21 +117,25 @@ public class GeneratorInterface {
 		return classPrefix;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @return Method[]
+	 * @throws SecurityException 
 	 * @see java.lang.Class#getDeclaredMethods()
 	 */
 	public Method[] getDeclaredMethods() throws SecurityException {
 		return javaInterface.getDeclaredMethods();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @return Package
 	 * @see java.lang.Class#getPackage()
 	 */
 	public Package getPackage() {
 		return javaInterface.getPackage();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @return String
 	 * @see java.lang.Class#getSimpleName()
 	 */
 	public String getSimpleName() {
