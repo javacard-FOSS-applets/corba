@@ -33,7 +33,7 @@ public class GeneratorInterface {
 	public GeneratorInterface(Class javaInterface, String AppletID, String PackageID,  byte appletCLA, String prefix)
 	{
 		this.javaInterface = javaInterface;
-		this.instructionsNumber = new int [javaInterface.getMethods().length];
+		this.instructionsNumber = new int [javaInterface.getDeclaredMethods().length];
 		generateInstructionNumbers();
 		
 		this.classPrefix = prefix;
@@ -49,7 +49,7 @@ public class GeneratorInterface {
 		int increment = 10;
 		this.instructionsNumber[0] = increment;
 		
-		for (int i = 1; i < this.javaInterface.getMethods().length; i++) {
+		for (int i = 1; i < this.javaInterface.getDeclaredMethods().length; i++) {
 			increment += 10;
 			this.instructionsNumber[i] = increment; 
 		}
@@ -62,13 +62,13 @@ public class GeneratorInterface {
 	 */
 	public String[] getDeclaredInstruction()
 	{
-		int nbMethods = javaInterface.getMethods().length;
+		int nbMethods = javaInterface.getDeclaredMethods().length;
 		
 		String[] declarations = new String [nbMethods];
 		
 		for(int i=0; i < nbMethods; i++)
 		{
-			Method m = javaInterface.getMethods()[i];
+			Method m = javaInterface.getDeclaredMethods()[i];
 			
 			declarations[i] ="final static byte "
 				+ m.getName().toUpperCase()+" = (byte)0x"+this.instructionsNumber[i];  
@@ -79,13 +79,13 @@ public class GeneratorInterface {
 	
 	public String[] getInstructionNames()
 	{
-		int nbMethods = javaInterface.getMethods().length;
+		int nbMethods = javaInterface.getDeclaredMethods().length;
 		
 		String[] declarations = new String [nbMethods];
 		
 		for(int i=0; i < nbMethods; i++)
 		{
-			Method m = javaInterface.getMethods()[i];
+			Method m = javaInterface.getDeclaredMethods()[i];
 			
 			declarations[i] = m.getName();  
 		}
