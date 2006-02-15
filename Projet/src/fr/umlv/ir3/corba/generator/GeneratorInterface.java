@@ -11,7 +11,7 @@ import java.util.List;
  * this class represent all the common declarations used to generate applet
  * and proxy squeletons
  */
-public class InterfaceView {
+public class GeneratorInterface {
 	
 	// liste des methodes de l'interface IDL
 	private List<Method> interfaceMethods;
@@ -32,7 +32,7 @@ public class InterfaceView {
 	 * @param prefix ?
 	 */
 	//TODO : lbarbisan - A quoi sert l'argument prefix 
-	public InterfaceView(List<Method> methods, String AppletID, String PackageID,  byte appletCLA, String prefix)
+	public GeneratorInterface(List<Method> methods, String AppletID, String PackageID,  byte appletCLA, String prefix)
 	{
 		this.interfaceMethods = methods;
 		this.instructionsNumber = new int [this.interfaceMethods.size()];

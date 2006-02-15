@@ -1,8 +1,10 @@
-package fr.umlv.ir3.corba.generator;
+package fr.umlv.ir3.corba.generator.squeleton;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+
+import fr.umlv.ir3.corba.generator.GeneratorInterface;
 
 /**
  * 
@@ -11,13 +13,13 @@ import java.lang.reflect.Method;
  */
 public abstract class AbstractSqueleton 
 {
-	protected InterfaceView SqueletonInterface;
+	protected GeneratorInterface squeletonInterface;
 	protected String className;
 	
 	
-	protected AbstractSqueleton(InterfaceView squeletonInterface) 
+	protected AbstractSqueleton(GeneratorInterface squeletonInterface) 
 	{
-		this.SqueletonInterface = squeletonInterface;
+		this.squeletonInterface = squeletonInterface;
 		this.className = setName();
 		
 	}

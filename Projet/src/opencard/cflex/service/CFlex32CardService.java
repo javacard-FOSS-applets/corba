@@ -6,7 +6,8 @@ package opencard.cflex.service;
 import java.io.InputStream;
 
 import opencard.core.service.CardServiceException;
-import opencard.core.terminal.*;
+import opencard.core.terminal.CardTerminalException;
+import opencard.core.terminal.CommandAPDU;
 import opencard.core.terminal.ResponseAPDU;
 
 

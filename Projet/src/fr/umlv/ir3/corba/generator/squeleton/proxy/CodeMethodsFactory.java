@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.umlv.ir3.corba.generator.proxy;
+package fr.umlv.ir3.corba.generator.squeleton.proxy;
 
 import java.lang.reflect.Method;
 

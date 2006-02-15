@@ -1,13 +1,13 @@
-package fr.umlv.ir3.corba.generator.applet;
+package fr.umlv.ir3.corba.generator.squeleton.applet;
 
-import fr.umlv.ir3.corba.generator.AbstractSqueleton;
-import fr.umlv.ir3.corba.generator.InterfaceView;
+import fr.umlv.ir3.corba.generator.GeneratorInterface;
+import fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton;
 
 
 public class AppletSqueleton extends AbstractSqueleton implements AppletInterface
 {
 	
-	public AppletSqueleton(InterfaceView squeletonInterface)
+	public AppletSqueleton(GeneratorInterface squeletonInterface)
 	{
 		super(squeletonInterface);
 	}
@@ -15,11 +15,11 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	@Override
 	public String setName() 
 	{
-		return this.SqueletonInterface.getClassPrefix() + "Applet";
+		return this.squeletonInterface.getClassPrefix() + "Applet";
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.applet.AppletInterface#generateProcessMethod()
+	 * @see fr.umlv.ir3.corba.generator.squeleton.applet.AppletInterface#generateProcessMethod()
 	 */
 	public String generateProcessMethod() 
 	{
@@ -35,7 +35,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 		
 		//TODO : ajouter le test sur le CLA
 		
-		String[] instructions = this.SqueletonInterface.getInstructionNames();
+		String[] instructions = this.squeletonInterface.getInstructionNames();
 		for (int i = 0; i < instructions.length; i++) 
 		{
 			sb.append(indent(1)).append("case").append(instructions[i].toUpperCase()).append(":\n")
@@ -51,7 +51,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.applet.AppletInterface#generateInstallMethod()
+	 * @see fr.umlv.ir3.corba.generator.squeleton.applet.AppletInterface#generateInstallMethod()
 	 */
 	public String generateInstallMethod() 
 	{	
@@ -67,7 +67,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.applet.AppletInterface#generateSelectMethod()
+	 * @see fr.umlv.ir3.corba.generator.squeleton.applet.AppletInterface#generateSelectMethod()
 	 */
 	public String generateSelectMethod() 
 	{
@@ -81,7 +81,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void generateStartClass(StringBuilder code) {
@@ -90,7 +90,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void generateMethods(StringBuilder code) {
@@ -99,7 +99,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateInitialize(java.lang.StringBuilder)
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateInitialize(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void generateInitialize(StringBuilder code) 
@@ -113,7 +113,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	/**
-	 * @see fr.umlv.ir3.corba.generator.AbstractSqueleton#generateFinalize(java.lang.StringBuilder)
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateFinalize(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void generateFinalize(StringBuilder code) {
