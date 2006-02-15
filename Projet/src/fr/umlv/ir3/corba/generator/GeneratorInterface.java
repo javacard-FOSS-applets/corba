@@ -109,5 +109,12 @@ public class GeneratorInterface {
 	public Class getJavaInterface() {
 		return javaInterface;
 	}
+
+	/**
+	 * @return Returns the applet_CLA.
+	 */
+	public byte getApplet_CLA() {
+		return applet_CLA;
+	}
 	
 }

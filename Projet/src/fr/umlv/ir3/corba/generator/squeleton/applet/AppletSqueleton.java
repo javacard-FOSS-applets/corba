@@ -119,6 +119,14 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	protected void generateFinalize(StringBuilder code) {
 	
 	}
+
+	/**
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#getPackage()
+	 */
+	@Override
+	public String getPackage() {
+		return "";
+	}
 	
 	
 	

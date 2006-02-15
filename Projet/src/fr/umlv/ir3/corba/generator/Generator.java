@@ -2,10 +2,13 @@ package fr.umlv.ir3.corba.generator;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.umlv.ir3.corba.generator.squeleton.proxy.ClientSqueleton;
 import fr.umlv.ir3.corba.generator.squeleton.proxy.ProxySqueleton;
+import fr.umlv.ir3.corba.generator.squeleton.proxy.ServerSqueleton;
 
 /**
  * This class is the main class used to generate all necessary classes to communicate
@@ -32,9 +35,17 @@ public class Generator {
 	 */
 	public void generateProxy(){
 		parseInterface();
+		ClientSqueleton clientSqueleton = new ClientSqueleton(generatorInterface);
 		ProxySqueleton proxySqueleton = new ProxySqueleton(generatorInterface);
+		
+		ArrayList<GeneratorInterface> lists = new ArrayList<GeneratorInterface>();
+		lists.add(generatorInterface);
+		ServerSqueleton serverSqueleton = new ServerSqueleton(lists);
+		
 		try {
 			proxySqueleton.generateFile(this.getGeneratedSourcePath());
+			clientSqueleton.generateFile(this.getGeneratedSourcePath());
+			serverSqueleton.generateFile(this.getGeneratedSourcePath());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

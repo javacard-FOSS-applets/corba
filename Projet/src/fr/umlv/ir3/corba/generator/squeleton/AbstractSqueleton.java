@@ -16,12 +16,10 @@ public abstract class AbstractSqueleton
 	protected GeneratorInterface generatorInterface;
 	protected String className;
 	
-	
 	protected AbstractSqueleton(GeneratorInterface squeletonInterface) 
 	{
 		this.generatorInterface = squeletonInterface;
 		this.className = getName();
-		
 	}
 	
 	/**
@@ -29,6 +27,12 @@ public abstract class AbstractSqueleton
 	 * @return the name of the class
 	 */
 	abstract public String getName();
+	
+	/**
+	 * this method set the squeleton class name
+	 * @return the name of the class
+	 */
+	abstract public String getPackage();
 	
 	
 	/**
@@ -84,14 +88,20 @@ public abstract class AbstractSqueleton
 	 * @param path
 	 * @throws FileNotFoundException 
 	 */
-	public void generateFile(String path) throws FileNotFoundException
+	public void generateFile(String generatedSourcePath) throws FileNotFoundException
 	{
-		String fullPath = AbstractSqueleton.treatPath(path)+this.className+".java";
+		//FIXME : compatibilité Windows !!!!
+		String fileName = this.className+".java";
+		//Création des répertoires si necessaire
+		String path = generatedSourcePath + this.getPackage().replace(".", "/");
+		if(new File(path).mkdirs())
+		{
+		//	throw new FileNotFoundException("Unable to create packages:" + path);
+		}
+		String fullPath = path + "/" + fileName;
 		
 		PrintWriter outFile = new PrintWriter(new File(fullPath));
-		
 		outFile.print(generateSqueleton().toString());
-		
 		outFile.close();
 	}
 	

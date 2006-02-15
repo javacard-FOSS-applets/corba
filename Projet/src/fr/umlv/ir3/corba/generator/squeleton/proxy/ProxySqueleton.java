@@ -1,23 +1,6 @@
 package fr.umlv.ir3.corba.generator.squeleton.proxy;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import fr.umlv.ir3.corba.generator.Generator;
 import fr.umlv.ir3.corba.generator.GeneratorInterface;
-import fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton;
-import fr.umlv.ir3.corba.resources.Resources;
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * This Squeleteton is used to generate access to Applet, for each method it
@@ -35,10 +18,7 @@ import freemarker.template.TemplateException;
  * @author lbarbisan
  * 
  */
-public class ProxySqueleton extends AbstractSqueleton {
-
-	Template template = null;
-	Map<String, Object> root = new HashMap<String,Object>();
+public class ProxySqueleton extends AbstractFreeMarkerSqueleton {
 
 	/**
 	 * Constructor of ProxySqueleton
@@ -54,70 +34,27 @@ public class ProxySqueleton extends AbstractSqueleton {
 	public String getName() {
 		return generatorInterface.getJavaInterface().getSimpleName() + "Impl";
 	}
-
+	/**
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#getPackage()
+	 */
+	@Override
+	public String getPackage() {
+		return generatorInterface.getJavaInterface().getPackage().getName();
+	}
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void generateStartClass(StringBuilder code) {
-		initFreeMarker();
-		root.put("package", generatorInterface.getJavaInterface().getPackage().toString());
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
 	 */
 	@Override
-	protected void generateMethods(StringBuilder code)
-	{
-	}
-	/**
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateFinalize(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateFinalize(StringBuilder code) {
-		
-		finalizeFreeMarker(code);
-	}
-
-	/**
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateInitialize(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateInitialize(StringBuilder code) {
+	protected void generateMethods(StringBuilder code) {
+		// TODO Auto-generated method stub
 		
 	}
-
-	private void finalizeFreeMarker(StringBuilder code)
-	{
-		try {
-			Writer out = new StringWriter();
-			template.process(root, out);
-			code.append(out.toString());
-		} catch (TemplateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private void initFreeMarker()
-	{
-		try {
-			Configuration cfg = new Configuration();
-			//Specify the data source where the template files come from.
-			//Here I set a file directory for it:
-			cfg.setDirectoryForTemplateLoading(new File(Resources.class.getResource(".").getPath()));
-			//Specify how templates will see the data model. This is an advanced topic...
-			//but just use this:
-			cfg.setObjectWrapper(new DefaultObjectWrapper());
-
-			template = cfg.getTemplate("proxy.ftl");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 }
