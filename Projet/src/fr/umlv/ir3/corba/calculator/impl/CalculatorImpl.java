@@ -119,7 +119,7 @@ public class CalculatorImpl extends AppletCalculatorPOA{
             //Send APDU trame to applet
     		ResponseAPDU res = sendCommand(RESULT,(byte)operator);
     		//TODO: verifier la bonne utilisation du traitement des reponses
-    		return res.data()[0];
+    		return (short)res.getBuffer()[0];
 		} catch (CardTerminalException e) {
 			throw new CardException(e.getMessage());
 		}

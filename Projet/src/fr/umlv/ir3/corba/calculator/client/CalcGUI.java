@@ -143,7 +143,6 @@ class CalcGUI{
 				resultField.setText("" + model.getResult(operator));
 				operationField.setText(operationField.getText() + " " + operator + " " );
 				number="";
-				resultField.setText("10");
 			} catch (InvalidOperator e) {
 				System.err.println("Applet error: Invalid operator ("+ e.getMessage() + ")");
 				JOptionPane.showMessageDialog(window, "Invalid operator", "Applet error", JOptionPane.ERROR_MESSAGE);
@@ -185,4 +184,23 @@ class CalcGUI{
             }
 		}
 	}
+    
+    /**
+     * This method launchs a graphical corba client
+     * @param args not used
+     */
+    public static void main(String[] args) {
+        try {
+            //initialize model
+            CalcClient client = new CalcClient();
+            //initialize view
+            CalcGUI window = new CalcGUI(client);
+            //launch graphical interface
+            window.start();
+        } catch (Exception e) {
+            //display any exceptions
+            System.err.println("Calculator client error: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), "Calculator client error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
