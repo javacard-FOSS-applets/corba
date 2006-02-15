@@ -78,17 +78,13 @@ public class Generator {
 		return generatorInterface;
 	}
 	
-	private List<Method> operationsMethod() {
-		return Arrays.asList(this.javaInterface.getMethods());
-	}
-	
 	/**
 	 * Call this method to reparse Interface classes
 	 */
 	private void parseInterface()
 	{
 		generatorInterface = new GeneratorInterface(
-				operationsMethod(),
+				javaInterface,
 				//FIXME : Relpacer le packageID
 				"ApppletID",
 				//FIXME : Renplacer le AppletID

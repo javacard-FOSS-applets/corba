@@ -1,8 +1,8 @@
 package fr.umlv.ir3.corba.generator.squeleton;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 
 import fr.umlv.ir3.corba.generator.GeneratorInterface;
 
@@ -13,14 +13,14 @@ import fr.umlv.ir3.corba.generator.GeneratorInterface;
  */
 public abstract class AbstractSqueleton 
 {
-	protected GeneratorInterface squeletonInterface;
+	protected GeneratorInterface generatorInterface;
 	protected String className;
 	
 	
 	protected AbstractSqueleton(GeneratorInterface squeletonInterface) 
 	{
-		this.squeletonInterface = squeletonInterface;
-		this.className = setName();
+		this.generatorInterface = squeletonInterface;
+		this.className = getName();
 		
 	}
 	
@@ -28,7 +28,7 @@ public abstract class AbstractSqueleton
 	 * this method set the squeleton class name
 	 * @return the name of the class
 	 */
-	abstract public String setName();
+	abstract public String getName();
 	
 	
 	/**
@@ -87,7 +87,8 @@ public abstract class AbstractSqueleton
 	public void generateFile(String path) throws FileNotFoundException
 	{
 		String fullPath = AbstractSqueleton.treatPath(path)+this.className+".java";
-		PrintWriter outFile = new PrintWriter(fullPath);
+		
+		PrintWriter outFile = new PrintWriter(new File(fullPath));
 		
 		outFile.print(generateSqueleton().toString());
 		

@@ -3,9 +3,12 @@ package fr.umlv.ir3.corba.generator.squeleton.proxy;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import fr.umlv.ir3.corba.generator.Generator;
 import fr.umlv.ir3.corba.generator.GeneratorInterface;
@@ -34,28 +37,22 @@ import freemarker.template.TemplateException;
  */
 public class ProxySqueleton extends AbstractSqueleton {
 
-	private StringBuilder code = null;
-	private int indentation = 0;
-
 	Template template = null;
+	Map<String, Object> root = new HashMap<String,Object>();
 
 	/**
 	 * Constructor of ProxySqueleton
-	 * 
-	 * @param interfaceView
-	 *            Interface which define method
+	 * @param generatorInterface Interface which define method
 	 */
-	public ProxySqueleton(GeneratorInterface interfaceView) {
-		super(interfaceView);
+	public ProxySqueleton(GeneratorInterface generatorInterface) {
+		super(generatorInterface);
 	}
-
 	/**
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#setName()
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#getName()
 	 */
 	@Override
-	public String setName() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getName() {
+		return generatorInterface.getJavaInterface().getSimpleName() + "Impl";
 	}
 
 	/**
@@ -63,12 +60,55 @@ public class ProxySqueleton extends AbstractSqueleton {
 	 */
 	@Override
 	protected void generateStartClass(StringBuilder code) {
+		initFreeMarker();
+		root.put("package", generatorInterface.getJavaInterface().getPackage().toString());
+	}
+	/**
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
+	 */
+	@Override
+	protected void generateMethods(StringBuilder code)
+	{
+	}
+	/**
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateFinalize(java.lang.StringBuilder)
+	 */
+	@Override
+	protected void generateFinalize(StringBuilder code) {
+		
+		finalizeFreeMarker(code);
+	}
+
+	/**
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateInitialize(java.lang.StringBuilder)
+	 */
+	@Override
+	protected void generateInitialize(StringBuilder code) {
+		
+	}
+
+	private void finalizeFreeMarker(StringBuilder code)
+	{
+		try {
+			Writer out = new StringWriter();
+			template.process(root, out);
+			code.append(out.toString());
+		} catch (TemplateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void initFreeMarker()
+	{
 		try {
 			Configuration cfg = new Configuration();
 			//Specify the data source where the template files come from.
 			//Here I set a file directory for it:
-			cfg.setDirectoryForTemplateLoading(new File(Resources.class
-					.getResource(".").getPath()));
+			cfg.setDirectoryForTemplateLoading(new File(Resources.class.getResource(".").getPath()));
 			//Specify how templates will see the data model. This is an advanced topic...
 			//but just use this:
 			cfg.setObjectWrapper(new DefaultObjectWrapper());
@@ -78,58 +118,6 @@ public class ProxySqueleton extends AbstractSqueleton {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateMethods(StringBuilder code) {
-		this.code = code;
-		indentation++;
-		Iterator<Method> iterator = squeletonInterface.getMethodsIterator();
-		while (iterator.hasNext()) {
-			Method method = iterator.next();
-			code.append(CodeMethodsFactory.createCodeMethodsFactory()
-					.generateMethodCode(method));
-		}
-		indentation--;
-	}
-
-	/**
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateFinalize(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateFinalize(StringBuilder code) {
-		try {
-			Writer out = new OutputStreamWriter(System.out);
-			Object root = null;
-			template.process(root, out);
-			out.flush();
-		} catch (TemplateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-
-	/**
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateInitialize(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateInitialize(StringBuilder code) {
-
-	}
-
-	/**
-	 * Add a line into code StringBuilder
-	 * @param line line to add in code
-	 */
-	private void line(String line) {
-		code.append(indent(indentation)).append(line).append("\n");
 	}
 
 }

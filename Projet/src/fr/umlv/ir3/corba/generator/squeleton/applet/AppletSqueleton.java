@@ -13,9 +13,9 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 	}
 	
 	@Override
-	public String setName() 
+	public String getName() 
 	{
-		return this.squeletonInterface.getClassPrefix() + "Applet";
+		return this.generatorInterface.getClassPrefix() + "Applet";
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class AppletSqueleton extends AbstractSqueleton implements AppletInterfac
 		
 		//TODO : ajouter le test sur le CLA
 		
-		String[] instructions = this.squeletonInterface.getInstructionNames();
+		String[] instructions = this.generatorInterface.getInstructionNames();
 		for (int i = 0; i < instructions.length; i++) 
 		{
 			sb.append(indent(1)).append("case").append(instructions[i].toUpperCase()).append(":\n")
