@@ -22,7 +22,7 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
 	
 	//Instruction set for ${interface.simpleName}Applet
 	<#list interface.getDeclaredMethods() as method>
-	private byte ${method.name?upper_case} = 0x${method_index+1}0;
+	private byte ${method.name?upper_case} = 0x${interface.instructionsNumber[method_index]};
 	</#list>
 	
 	//JavaCard Manager
