@@ -44,7 +44,7 @@ public class CodeMethodsFactory {
 		StringBuilder beforeAlloc = new StringBuilder();
 		StringBuilder afterAlloc = new StringBuilder();
 
-		beforeAlloc.append("dataBuffer = new byte[");
+		beforeAlloc.append("\t\tdataBuffer = new byte[");
 		afterAlloc.append("];\n");
 
 		if (method.getParameterTypes().length != 0) {
