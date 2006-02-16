@@ -95,10 +95,7 @@ public abstract class AbstractSqueleton
 		String fileName = this.className+".java";
 		//Création des répertoires si necessaire
 		String path = generatedSourcePath + this.getPackage().replace(".", "/");
-		if(new File(path).mkdirs())
-		{
-			throw new FileNotFoundException("Unable to create packages:" + path);
-		}
+		(new File(path)).mkdirs();
 		String fullPath = path + "/" + fileName;
 		
 		PrintWriter outFile = new PrintWriter(new File(fullPath));

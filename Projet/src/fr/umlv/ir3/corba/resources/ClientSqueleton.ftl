@@ -13,6 +13,8 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
+import ${interface.package.name}.${interface.simpleName}Impl;
+
 /**
  * Client for Client${interface.simpleName}
  * @author generator
@@ -38,10 +40,19 @@ public class Client${interface.simpleName} {
 		o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
 		NameComponent [] name = context.to_name(this.getClass().getSimpleName());
-		Implementation = Client${interface.simpleName}Helper.narrow(context.resolve(name));
+		implementation = ${interface.simpleName}Helper.narrow(context.resolve(name));
+		//TODO: Add code here
 	}
     
-	public static void main(String[] args) {
+    /**
+	 * Main method
+	 * @param args command line argument
+	 * @throws InvalidName name specified not found
+	 * @throws CannotProceed can't execute process
+	 * @throws NotFound can't find requierd object on server
+	 */
+	public static void main(String[] args)  throws InvalidName, NotFound, CannotProceed {
 		Client${interface.simpleName} client${interface.simpleName} = new Client${interface.simpleName}();
+		//TODO: Add code here
     }
 }
