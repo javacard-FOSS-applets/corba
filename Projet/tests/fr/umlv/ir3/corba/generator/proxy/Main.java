@@ -18,5 +18,6 @@ public class Main {
 		Generator generator = new Generator("fr.umlv.ir3.corba.generator.proxy.ReferenceProxyInterfaceOperations");
 		generator.setGeneratedSourcePath("./sampleGeneration/");
 		generator.generateProxy();
+		generator.generateAppletStub();
 	}
 }
