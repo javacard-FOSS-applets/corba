@@ -41,7 +41,6 @@ public class GeneratorInterface {
 		this.appletPackage= appletPackage;
 		this.classPrefix = getSimpleName();
 	}
-	
 	/**
 	 * this method generate all number for the instructions used in the applet
 	 * those number are used to call methods in the applet 
@@ -55,8 +54,7 @@ public class GeneratorInterface {
 			increment += 10;
 			this.instructionsNumber[i] = increment; 
 		}
-	}
-	
+	}	
 	/**
 	 * this method gives all the necessary declarations to use and 
 	 * call methods in teh applet 
@@ -78,7 +76,6 @@ public class GeneratorInterface {
 		
 		return declarations;
 	}
-	
 	/**
 	 * return the instruction name for javacard
 	 * @return list of instruction names
@@ -98,8 +95,6 @@ public class GeneratorInterface {
 		
 		return declarations;
 	}
-	
-
 	/**
 	 * @return Returns the applet_CLA.
 	 */
@@ -119,6 +114,7 @@ public class GeneratorInterface {
 	 * @see java.lang.Class#getDeclaredMethods()
 	 */
 	public Method[] getDeclaredMethods() throws SecurityException {
+		//javaInterface.getDeclaredMethods()[0].getParameterTypes()[1].isArray()
 		return javaInterface.getDeclaredMethods();
 	}
 

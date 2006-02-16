@@ -20,7 +20,6 @@ import fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton;
  * 
  */
 public class ProxySqueleton extends AbstractFreeMarkerSqueleton {
-
 	/**
 	 * Constructor of ProxySqueleton
 	 * @param generatorInterface Interface which define method
@@ -41,6 +40,14 @@ public class ProxySqueleton extends AbstractFreeMarkerSqueleton {
 	@Override
 	public String getPackage() {
 		return generatorInterface.getPackage().getName();
+	}
+	/** (non-Javadoc)
+	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton#generateInitialize(java.lang.StringBuilder)
+	 */
+	@Override
+	protected void generateInitialize(StringBuilder code) {
+		super.generateInitialize(code);
+		root.put("methodGenerator", CodeMethodsFactory.createCodeMethodsFactory());
 	}
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
