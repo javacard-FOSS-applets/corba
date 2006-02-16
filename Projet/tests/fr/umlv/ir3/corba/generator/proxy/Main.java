@@ -15,7 +15,7 @@ public class Main {
 	 * @throws ClassNotFoundException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException {
-		Generator generator = new Generator("fr.umlv.ir3.corba.generator.proxy.ReferenceProxyInterface");
+		Generator generator = new Generator("fr.umlv.ir3.corba.generator.proxy.ReferenceProxyInterfaceOperations");
 		generator.setGeneratedSourcePath("./sampleGeneration/");
 		generator.generateProxy();
 	}

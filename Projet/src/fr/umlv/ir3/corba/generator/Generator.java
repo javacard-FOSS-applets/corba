@@ -97,8 +97,7 @@ public class Generator {
 				"ApppletID",
 				//FIXME : Renplacer le AppletID
 				"PackageID",
-				(byte) 0x86,
-				javaInterface.getSimpleName()
+				(byte) 0x86
 		);
 	}
 

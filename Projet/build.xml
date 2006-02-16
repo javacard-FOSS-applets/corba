@@ -61,5 +61,21 @@
 		</exec>
 		<echo>Generation OK</echo>
 	</target>
+	
+	<target name="genericIdlj" description="Generate interfaces from IDL file">
+			<delete dir="${generated}" />
+			<mkdir dir="${generated}" />
+			<echo>Generation du fichier idlj</echo>
+			<exec executable="${idl.exec}">
+				<arg value="-td" />
+				<arg value="${arg.td}" />
+				<arg value="-pkgPrefix" />
+				<arg value="${arg.module}" />
+				<arg value="${arg.package}" />
+				<arg value="-fall" />
+				<arg value="${arg.idl}" />
+			</exec>
+			<echo>Generation OK</echo>
+		</target>
 
 </project>

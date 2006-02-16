@@ -2,8 +2,6 @@ ${interface.package}.client;
 
 import java.applet.Applet;
 import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.ORBPackage.InvalidName;
@@ -13,6 +11,7 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
+import ${interface.package.name}.${interface.simpleName}Helper;
 import ${interface.package.name}.${interface.simpleName}Impl;
 
 /**
@@ -28,7 +27,7 @@ public class Client${interface.simpleName} {
 	 * @throws CannotProceed can't execute process
 	 * @throws NotFound can't find requierd object on server
 	 */
-	public Client${interface.simpleName}() throws InvalidName, NotFound, CannotProceed  {
+	public Client${interface.simpleName}() throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {
 
 		//FIXME: Used file properties		
 		Properties props = new Properties();
@@ -40,7 +39,7 @@ public class Client${interface.simpleName} {
 		o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
 		NameComponent [] name = context.to_name(this.getClass().getSimpleName());
-		implementation = ${interface.simpleName}Helper.narrow(context.resolve(name));
+		implementation = (${interface.simpleName}Impl) ${interface.simpleName}Helper.narrow(context.resolve(name));
 		//TODO: Add code here
 	}
     
@@ -51,7 +50,7 @@ public class Client${interface.simpleName} {
 	 * @throws CannotProceed can't execute process
 	 * @throws NotFound can't find requierd object on server
 	 */
-	public static void main(String[] args)  throws InvalidName, NotFound, CannotProceed {
+	public static void main(String[] args)  throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {
 		Client${interface.simpleName} client${interface.simpleName} = new Client${interface.simpleName}();
 		//TODO: Add code here
     }

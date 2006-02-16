@@ -15,10 +15,10 @@ public class GeneratorInterface {
 	private Class javaInterface;
 	// liste des numeros d'instructions correspondant aux methodes
 	private int [] instructionsNumber;
-	
 	private String classPrefix;
-	
-	private byte applet_CLA;
+	private byte appletCLA;
+	private String appletID;
+	private String appletPackage;
 	
 	/**
 	 * Constructor, this constructor must be bulid ton construct object
@@ -30,14 +30,16 @@ public class GeneratorInterface {
 	 * @param prefix ?
 	 */
 	//TODO : lbarbisan - A quoi sert l'argument prefix 
-	public GeneratorInterface(Class javaInterface, String AppletID, String PackageID,  byte appletCLA, String prefix)
+	public GeneratorInterface(Class javaInterface, String appletID, String appletPackage,  byte appletCLA)
 	{
 		this.javaInterface = javaInterface;
 		this.instructionsNumber = new int [javaInterface.getDeclaredMethods().length];
 		generateInstructionNumbers();
-		
-		this.classPrefix = prefix;
-		this.applet_CLA = appletCLA; 
+
+		this.appletCLA = appletCLA; 
+		this.appletID = appletID;
+		this.appletPackage= appletPackage;
+		this.classPrefix = getSimpleName();
 	}
 	
 	/**
@@ -97,18 +99,12 @@ public class GeneratorInterface {
 		return declarations;
 	}
 	
-	
-	/**
-	 * @return Returns the javaInterface.
-	 */
-	public Class getJavaInterface() {
-		return javaInterface;
-	}
+
 	/**
 	 * @return Returns the applet_CLA.
 	 */
-	public byte getApplet_CLA() {
-		return applet_CLA;
+	public byte getAppletCLA() {
+		return appletCLA;
 	}
 	/**
 	 * @return Returns the classPrefix.
@@ -139,6 +135,21 @@ public class GeneratorInterface {
 	 * @see java.lang.Class#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return javaInterface.getSimpleName();
+		//FIXME : Trouver un truc moins degeulasse
+		return javaInterface.getSimpleName().replace("Operations","");
+	}
+
+	/**
+	 * @return Returns the appletID.
+	 */
+	public String getAppletID() {
+		return appletID;
+	}
+
+	/**
+	 * @return Returns the appletPackage.
+	 */
+	public String getAppletPackage() {
+		return appletPackage;
 	}
 }

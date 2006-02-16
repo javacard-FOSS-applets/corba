@@ -33,14 +33,14 @@ public class ProxySqueleton extends AbstractFreeMarkerSqueleton {
 	 */
 	@Override
 	public String getName() {
-		return generatorInterface.getJavaInterface().getSimpleName() + "Impl";
+		return generatorInterface.getSimpleName() + "Impl";
 	}
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#getPackage()
 	 */
 	@Override
 	public String getPackage() {
-		return generatorInterface.getJavaInterface().getPackage().getName();
+		return generatorInterface.getPackage().getName();
 	}
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)

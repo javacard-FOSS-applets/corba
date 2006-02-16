@@ -36,7 +36,7 @@ public class ServerSqueleton extends AbstractFreeMarkerSqueleton{
 	 */
 	@Override
 	public String getPackage() {
-		return generatorInterface.getJavaInterface().getPackage().getName() + ".server";
+		return generatorInterface.getPackage().getName() + ".server";
 	}
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton#generateInitialize(java.lang.StringBuilder)

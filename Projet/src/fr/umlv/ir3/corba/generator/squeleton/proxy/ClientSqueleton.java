@@ -24,14 +24,14 @@ public class ClientSqueleton extends AbstractFreeMarkerSqueleton {
 	 */
 	@Override
 	public String getName() {
-		return "Client" + generatorInterface.getJavaInterface().getSimpleName();
+		return "Client" + generatorInterface.getSimpleName();
 	}
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#getPackage()
 	 */
 	@Override
 	public String getPackage() {
-		return generatorInterface.getJavaInterface().getPackage().getName() + ".client";
+		return generatorInterface.getPackage().getName() + ".client";
 	}
 
 	/**
