@@ -46,11 +46,7 @@ public class ServerSqueleton extends AbstractFreeMarkerSqueleton{
 		super.generateInitialize(code);
 		root.put("generatorInterfaces",generatorInterfaces);
 	}
-	/**
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateStartClass(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateStartClass(StringBuilder code) {}
+	
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
 	 */

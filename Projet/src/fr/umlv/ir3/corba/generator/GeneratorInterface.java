@@ -148,4 +148,8 @@ public class GeneratorInterface {
 	public String getAppletPackage() {
 		return appletPackage;
 	}
+	
+	public int[] getInstructionsNumber() {
+		return instructionsNumber;
+	}
 }
