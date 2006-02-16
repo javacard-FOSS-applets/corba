@@ -18,7 +18,6 @@ import fr.umlv.ir3.corba.calculator.CardException;
 import fr.umlv.ir3.corba.calculator.InitializationException;
 import fr.umlv.ir3.corba.calculator.InvalidOperator;
 import fr.umlv.ir3.corba.calculator.StackOverFlow;
-import fr.umlv.ir3.corba.calculator.utils.Util;
 
 public class CalcClient {
 	private AppletCalculator calculator;
