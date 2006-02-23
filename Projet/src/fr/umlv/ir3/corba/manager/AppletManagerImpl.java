@@ -5,6 +5,7 @@ package fr.umlv.ir3.corba.manager;
 
 import java.util.Enumeration;
 
+import opencard.cflex.service.CFlex32CardService;
 import opencard.core.event.CTListener;
 import opencard.core.event.CardTerminalEvent;
 import opencard.core.event.EventGenerator;
@@ -16,29 +17,37 @@ import opencard.core.terminal.CardTerminalRegistry;
 import opencard.core.util.HexString;
 
 
+
 /**
  * @author olive
  *
  */
 public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	
+	static String auth_enc_ = "404142434445464748494A4B4C4D4E4F";
+	static String mac_ = auth_enc_;
+	
 	private SmartCard sm;
 	private final static Object monitor = "synchronization monitor";
+	private CFlex32CardService loader = null;
+	
+
+	
+	public AppletManagerImpl()throws Exception{
+		init();
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#init()
 	 */
-	public void init() throws ManagerException{
+	public void init() throws Exception{
 		CardTerminalRegistry ctr = CardTerminalRegistry.getRegistry();
 		CardTerminal terminal = null;
 		CardRequest cr = null;
 		
 		if (SmartCard.isStarted() == false) {
-			try {
-				SmartCard.start();
-			} catch (Exception e){
-				throw new ManagerException("erreur de lancement de la carte");
-			}
+			SmartCard.start();
 		}
 		
 		for (Enumeration terminals = ctr.getCardTerminals(); terminals
@@ -55,22 +64,18 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 			"Couldn't not retrieve a card reader");
 		}
 		
-		try{
-			//Wait for insert card
-			if (terminal.isCardPresent(0) == false) {
-				System.out.println("Re-insert/Insert your card ...");
-				cr = new CardRequest(CardRequest.NEWCARD, terminal, null);
-			} else {
-				cr = new CardRequest(CardRequest.ANYCARD, terminal, null);
-			}
-			sm = SmartCard.waitForCard(cr);
-			
-			if(sm==null)
-			{
-				throw new NullPointerException("Error when waiting for card to become ready");
-			}
-		}catch(Exception e){
-			throw new ManagerException("erreur de gestion du terminal");
+		//Wait for insert card
+		if (terminal.isCardPresent(0) == false) {
+			System.out.println("Re-insert/Insert your card ...");
+			cr = new CardRequest(CardRequest.NEWCARD, terminal, null);
+		} else {
+			cr = new CardRequest(CardRequest.ANYCARD, terminal, null);
+		}
+		sm = SmartCard.waitForCard(cr);
+		
+		if(sm==null)
+		{
+			throw new NullPointerException("Error when waiting for card to become ready");
 		}
 		
 		EventGenerator.getGenerator().addCTListener(this);
@@ -81,11 +86,11 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#load(byte[], int)
 	 */
 	public void load(byte[] input, int staticsize) throws ManagerException {
-		// TODO Auto-generated method stub
+		
 		
 	}
-
-
+	
+	
 	/* (non-Javadoc)
 	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#install(int, java.lang.String, java.lang.String)
 	 */
@@ -109,6 +114,31 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	public void status(int type) throws ManagerException {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/* (non-Javadoc)
+	 * @see opencard.core.event.CTListener#cardInserted(opencard.core.event.CardTerminalEvent)
+	 */
+	public void cardInserted(CardTerminalEvent arg0) throws CardTerminalException {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see opencard.core.event.CTListener#cardRemoved(opencard.core.event.CardTerminalEvent)
+	 */
+	public void cardRemoved(CardTerminalEvent arg0) throws CardTerminalException {
+		synchronized (monitor) {
+			monitor.notifyAll();
+		}	
+	}
+	
+	private CFlex32CardService getLoader() throws Exception {
+		if (loader == null) {
+			loader = (CFlex32CardService) sm.getCardService(
+					CFlex32CardService.class, true);
+		}
+		return loader;
 	}
 	
 	private int printTerminalInfos(CardTerminal terminal) {
@@ -138,25 +168,5 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 			e.printStackTrace();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see opencard.core.event.CTListener#cardInserted(opencard.core.event.CardTerminalEvent)
-	 */
-	public void cardInserted(CardTerminalEvent arg0) throws CardTerminalException {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	/* (non-Javadoc)
-	 * @see opencard.core.event.CTListener#cardRemoved(opencard.core.event.CardTerminalEvent)
-	 */
-	public void cardRemoved(CardTerminalEvent arg0) throws CardTerminalException {
-		synchronized (monitor) {
-			monitor.notifyAll();
-		}	
-	}
-
-
-	
 	
 }
