@@ -68,10 +68,7 @@ public class CodeMethodsFactory {
 
 		beforeAlloc.append("\t\t} catch (CardTerminalException e) {\n").append(
 				"\t\t\t// TODO Auto-generated catch block\n").append(
-				"\t\t\te.printStackTrace();\n").append(
-				"\t\t} catch (InitializationException e) {\n").append(
-				"\t\t\t// TODO Auto-generated catch block\n").append(
-				"\t\t\te.printStackTrace();}\n");
+				"\t\t\te.printStackTrace();\n}\n");
 		bufferLength = 0;
 		return beforeAlloc.toString();
 	}

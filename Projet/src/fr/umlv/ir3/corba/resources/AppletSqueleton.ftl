@@ -1,4 +1,4 @@
-${interface.package};
+${interface.package}.applet;
 
 
 import javacard.framework.APDU;

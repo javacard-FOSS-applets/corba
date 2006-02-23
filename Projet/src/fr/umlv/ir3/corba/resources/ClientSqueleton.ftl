@@ -32,7 +32,7 @@ public class Client${interface.simpleName} {
 		//FIXME: Used file properties		
 		Properties props = new Properties();
 		props.put("org.omg.CORBA.ORBInitialHost","localhost");
-		props.put("org.omg.CORBA.ORBInitialPort",1234);
+		props.put("org.omg.CORBA.ORBInitialPort","1234");
 		ORB orb = ORB.init((Applet)null,props);
 
 		org.omg.CORBA.Object o;

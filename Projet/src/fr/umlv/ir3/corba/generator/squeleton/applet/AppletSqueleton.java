@@ -24,7 +24,7 @@ public class AppletSqueleton extends AbstractFreeMarkerSqueleton
 	 */
 	@Override
 	public String getPackage() {
-		return this.generatorInterface.getPackage().getName();
+		return this.generatorInterface.getPackage().getName() + ".applet";
 	}
 
 	/* (non-Javadoc)

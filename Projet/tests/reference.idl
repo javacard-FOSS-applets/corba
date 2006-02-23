@@ -1,6 +1,6 @@
 module proxy {
 	interface ReferenceProxyInterface{
-		void m0a();
+		void ma0();
 		void ma1_b1(in octet b1);
 	};
 };

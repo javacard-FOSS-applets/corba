@@ -15,7 +15,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			Generator generator = new Generator("fr.umlv.ir3.corba.calculator.AppletCalculatorOperations");
-			@SuppressWarnings("unused") GeneratorUI generatorUI = new GeneratorUI(generator);
+			
 		} catch (Exception e) {
 			System.err.println("Generator error: " + e.getMessage());
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Generator error", JOptionPane.ERROR_MESSAGE);
