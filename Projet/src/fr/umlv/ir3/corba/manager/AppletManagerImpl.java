@@ -3,6 +3,7 @@
  */
 package fr.umlv.ir3.corba.manager;
 
+import java.io.ByteArrayInputStream;
 import java.util.Enumeration;
 
 import opencard.cflex.service.CFlex32CardService;
@@ -10,6 +11,7 @@ import opencard.core.event.CTListener;
 import opencard.core.event.CardTerminalEvent;
 import opencard.core.event.EventGenerator;
 import opencard.core.service.CardRequest;
+import opencard.core.service.CardServiceException;
 import opencard.core.service.SmartCard;
 import opencard.core.terminal.CardTerminal;
 import opencard.core.terminal.CardTerminalException;
@@ -85,9 +87,17 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	/* (non-Javadoc)
 	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#load(byte[], int)
 	 */
-	public void load(byte[] input, int staticsize) throws ManagerException {
+	public void load(byte[] input, int staticsize,String pakgId) throws ManagerException {
 		
-		
+		try {
+			getLoader().createSecureChannel(HexString.parseHexString(auth_enc_), HexString.parseHexString(mac_));
+			
+			
+			getLoader().installLoad(HexString.parseHexString(pakgId), new ByteArrayInputStream(input), staticsize);
+			getLoader().load();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
