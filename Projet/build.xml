@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="IDLJ" default="idlj" basedir=".">
+<project name="IDLJ" default="generateAll" basedir=".">
 	<description>Ant pour le projet CORBA</description>
 
     <!-- Décrie le projet -->
     <property name="project.title" value="Corba Project"/>
-    <property name="project.distname" value="Zi Project"/>
+    <property name="project.distname" value="Corba Project"/>
     <property name="project.version" value="0.1"/>
 	
 	<!-- Definie les proprietes globales pur cette compilation -->
-	<property name="projectName" value="MonProjet" />
-	<property name="generated" value="./generated" />
-	<property name="idl.file" value="./calculator.idl" />
+	<property name="projectName" value="Corba Project" />
 	<property name="idl.exec" value="idlj" />
-	<property name="idl.module" value="calculator" />
-	<property name="idl.package" value="fr.umlv.ir3.corba" />
-    <property name="src.path" value="./src"/>
 	<property name="javadoc.path" value="./api"/>
 	<property name="lib.path" value="./lib"/>
+
+	<property name="orbd.orbd" value="/usr/lib/jdk1.5.0_06/bin/orbd"/>
+	<property name="orbd.port" value="1234"/>
+	<property name="orbd.host" value="localhost"/>
 	
     <!-- Definie le classpath -->
     <path id="classpath">
@@ -27,6 +26,45 @@
 
     </path>
 	
+	<target name="generateAll" description="Generate interfaces forreference IDL file">
+		<antcall target="referenceIdlj"></antcall>
+		<antcall target="calculatorIdlj"></antcall>
+		<antcall target="managerIdlj"></antcall>
+	</target>
+	
+	<!-- Compilation de l'idl de reference pour la javacard-->
+	<target name="referenceIdlj" description="Generate interfaces forreference IDL file">
+		 <antcall target="idlj">
+			<param name="idl.module" value="proxy" />
+			<param name="idl.file" value="./configuration/fr/umlv/ir3/corba/resources/reference.idl" />
+			<param name="idl.package" value="fr.umlv.ir3.corba.generator" />
+		    <param name="src.path" value="../Applet/src"/>
+			<param name="generated" value="./generated" />
+		  </antcall>		
+	</target>
+
+	<!-- Compilation de l'idl de reference pour la calculatrice-->
+	<target name="calculatorIdlj" description="Generate interfaces for claculator IDL file">
+		 <antcall target="idlj">
+			<param name="idl.module" value="calculator" />
+			<param name="idl.file" value="./configuration/fr/umlv/ir3/corba/resources/calculator.idl" />
+			<param name="idl.package" value="fr.umlv.ir3.corba" />
+		    <param name="src.path" value="./src"/>
+			<param name="generated" value="./generated" />
+		  </antcall>		
+	</target>
+		  	
+	<!-- Compilation de l'idl de reference pour le manager d'applet-->
+	<target name="managerIdlj" description="Generate interfaces for manager IDL file">
+		 <antcall target="idlj">
+			<param name="idl.module" value="manager" />
+			<param name="idl.file" value="./configuration/fr/umlv/ir3/corba/resources/manager.idl" />
+			<param name="idl.package" value="fr.umlv.ir3.corba" />
+		    <param name="src.path" value="./src"/>
+			<param name="generated" value="./generated" />
+		  </antcall>		
+	</target>
+
     <!-- Target: Genere la javadoc -->
     <target name="javadoc" description="Generate JavaDoc API documentation">
         <delete dir="${javadoc.path}"/>
@@ -46,9 +84,8 @@
         </javadoc>
     </target>
 	
+	<!-- generate idlj file -->
 	<target name="idlj" description="Generate interfaces from IDL file">
-		<delete dir="${generated}" />
-		<mkdir dir="${generated}" />
 		<echo>Generation du fichier idlj</echo>
 		<exec executable="${idl.exec}">
 			<arg value="-td" />
@@ -62,20 +99,15 @@
 		<echo>Generation OK</echo>
 	</target>
 	
-	<target name="genericIdlj" description="Generate interfaces from IDL file">
-			<delete dir="${generated}" />
-			<mkdir dir="${generated}" />
-			<echo>Generation du fichier idlj</echo>
-			<exec executable="${idl.exec}">
-				<arg value="-td" />
-				<arg value="${arg.td}" />
-				<arg value="-pkgPrefix" />
-				<arg value="${arg.module}" />
-				<arg value="${arg.package}" />
-				<arg value="-fall" />
-				<arg value="${arg.idl}" />
-			</exec>
-			<echo>Generation OK</echo>
-		</target>
-
+	<!-- generate idlj file -->
+	<target name="runorbd" description="Generate interfaces from IDL file">
+		<echo>orbd démarré</echo>
+		<exec executable="${orbd.orbd}">
+			<arg value="-ORBInitialPort" />
+			<arg value="${orbd.port}" />
+			<arg value="-ORBInitialHost" />
+			<arg value="${orbd.host}" />
+		</exec>
+		<echo>stop</echo>
+	</target>
 </project>

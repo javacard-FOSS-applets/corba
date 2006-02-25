@@ -12,17 +12,11 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
-import exo4.AppletManager;
-import fr.umlv.ir3.corba.calculator.AppletCalculator;
-import fr.umlv.ir3.corba.calculator.AppletCalculatorHelper;
-import fr.umlv.ir3.corba.calculator.CardException;
-import fr.umlv.ir3.corba.calculator.InitializationException;
-import fr.umlv.ir3.corba.calculator.InvalidOperator;
-import fr.umlv.ir3.corba.calculator.StackOverFlow;
 import fr.umlv.ir3.corba.manager.AppletManagerHelper;
+import fr.umlv.ir3.corba.manager.AppletManagerOperations;
 
 public class AppletManagerClient {
-	private AppletManager applet;
+	private AppletManagerOperations applet;
 	
 	/** Constructor 
 	 * @throws InvalidName 
@@ -48,7 +42,7 @@ public class AppletManagerClient {
 		o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
 		NameComponent [] name = context.to_name(nameObject);
-		applet=(AppletManager) AppletManagerHelper.narrow(context.resolve(name));
+		applet=(AppletManagerOperations) AppletManagerHelper.narrow(context.resolve(name));
 	}
 	
 	

@@ -239,4 +239,13 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 		return HexString.parseHexString(mac_);
 		
 	}
+
+
+	/* (non-Javadoc)
+	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#load(byte[], int)
+	 */
+	public void load(byte[] input, int staticsize) throws ManagerException {
+		// TODO Auto-generated method stub
+		
+	}
 }
