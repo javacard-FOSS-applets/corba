@@ -14,7 +14,9 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		try {
-			Generator generator = new Generator("fr.umlv.ir3.corba.calculator.AppletCalculatorOperations");
+			Generator generator = new Generator("fr.umlv.ir3.corba.calculator.AppletCalculatorOperations",
+									"A000000003",
+									"A00000000301");
 			
 		} catch (Exception e) {
 			System.err.println("Generator error: " + e.getMessage());

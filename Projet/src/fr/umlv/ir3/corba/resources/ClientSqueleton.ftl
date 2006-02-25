@@ -33,15 +33,23 @@ public class Client${interface.simpleName} {
 		Properties props = new Properties();
 		props.put("org.omg.CORBA.ORBInitialHost","localhost");
 		props.put("org.omg.CORBA.ORBInitialPort","1234");
-		ORB orb = ORB.init((Applet)null,props);
+		ORB orb = ORB.init((String[])null,props);
 
 		org.omg.CORBA.Object o;
 		o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
-		NameComponent [] name = context.to_name(this.getClass().getSimpleName());
+		NameComponent [] name = context.to_name("proxy${interface.simpleName}");
 		implementation = (${interface.simpleName}Impl) ${interface.simpleName}Helper.narrow(context.resolve(name));
 		//TODO: Add code here
 	}
+	
+	/**
+	 * @return Returns the implementation.
+	 */
+	public ${interface.simpleName}Impl getImplementation() {
+		return implementation;
+	}
+	
     
     /**
 	 * Main method

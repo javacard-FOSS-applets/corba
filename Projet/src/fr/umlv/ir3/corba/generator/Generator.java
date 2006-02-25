@@ -18,14 +18,18 @@ public class Generator {
 	private Class javaInterface;
 	private GeneratorInterface generatorInterface;
 	private String generatedSourcePath = "./";
+	private String packageID;
+	private String appletID;
 	
 	/**
 	 * Contructor
 	 * @param className FullyQualifiedName of the java interfaco of an idl
 	 * @throws ClassNotFoundException id the class isn't found
 	 */
-	public Generator(String className) throws ClassNotFoundException{	
+	public Generator(String className, String packageID, String appletID) throws ClassNotFoundException{	
 		this.javaInterface = Class.forName(className);
+		this.packageID = packageID;
+		this.appletID = appletID;
 	}
 	
 	/**
@@ -102,11 +106,39 @@ public class Generator {
 		generatorInterface = new GeneratorInterface(
 				javaInterface,
 				//FIXME : Relpacer le packageID
-				"ApppletID",
+				appletID,
 				//FIXME : Renplacer le AppletID
-				"PackageID",
+				packageID,
 				(byte) 0x86
 		);
+	}
+
+	/**
+	 * @return Returns the packageID.
+	 */
+	public String getPackageID() {
+		return packageID;
+	}
+
+	/**
+	 * @param packageID The packageID to set.
+	 */
+	public void setPackageID(String packageID) {
+		this.packageID = packageID;
+	}
+
+	/**
+	 * @return Returns the appletID.
+	 */
+	public String getAppletID() {
+		return appletID;
+	}
+
+	/**
+	 * @param appletID The appletID to set.
+	 */
+	public void setAppletID(String appletID) {
+		this.appletID = appletID;
 	}
 
 }

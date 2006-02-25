@@ -45,9 +45,10 @@ public class Server {
 	<#list generatorInterfaces as interface>
 	private ${interface.simpleName}Impl proxy${interface.simpleName};
 	</#list>
-    
 	//JavaCard Manager
 	private CFlex32CardService javacard;	
+	//Specified applet to load
+	private String selectApplet;
 
     /**
      * TODO: completer les exceptions
@@ -100,7 +101,7 @@ public class Server {
 		byte [] id = root.activate_object(bindObject);
 		org.omg.CORBA.Object ref = root.id_to_reference(id);
 		
-		NameComponent [] name = contextExt.to_name(bindObject.getClass().getSimpleName());
+		NameComponent [] name = contextExt.to_name("proxy${interface.simpleName}");
 		try {
 			contextExt.bind(name,ref);
 		} catch (AlreadyBound e) {
@@ -118,7 +119,7 @@ public class Server {
 		CardTerminal cardTerminal  = selectLastTerminal();
 		CardRequest cardRequest = openCardAccess(cardTerminal);
 		//FIXME : Accès concurents sur plusieurs applet
-		selectApplet("${interface.appletID}", cardRequest);
+		selectApplet(selectApplet, cardRequest);
 		orb.run();
 	}
     /**
@@ -236,14 +237,30 @@ public class Server {
             Server server = new Server();
             //launch server
             System.out.println("Server Running");
+			server.setSelectApplet("${interface.appletID}");
             server.start();
             //stop server
             server.stop();
             System.out.println("Server stopped");  
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Erreur: " + e.getMessage());
+            System.err.println("Please check if orbd is started, try to launch orbd with this commandline : orbd -ORBInitialPort 1234 -ORBInitaHost localhost");
         }
     }
+    
+    /**
+	 * @return Returns the selectApplet.
+	 */
+	public String getSelectApplet() {
+		return selectApplet;
+	}
+
+	/**
+	 * @param selectApplet The selectApplet to set.
+	 */
+	public void setSelectApplet(String selectApplet) {
+		this.selectApplet = selectApplet;
+	}
+    
     
 }
