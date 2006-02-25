@@ -39,16 +39,18 @@ import ${interface.package.name}.${interface.simpleName}Impl;
  * @author BARBISAN Laurent, BOITEL Olivier, GUILLON Denis, LAMPS S�bastien 
  */
 public class Server {
-	//CORBA -ORB
+	//==CORBA
 	private ORB orb;
-	//Applets
+	private NamingContextExt contextExt;
+	private POA root;
+	
+	//==JavaCard
+	private CFlex32CardService javacard;	
+
+	//==Applets
 	<#list generatorInterfaces as interface>
 	private ${interface.simpleName}Impl proxy${interface.simpleName};
 	</#list>
-	//JavaCard Manager
-	private CFlex32CardService javacard;	
-	//Specified applet to load
-	private String selectApplet;
 
     /**
      * TODO: completer les exceptions
@@ -78,22 +80,16 @@ public class Server {
 		Properties props = new Properties();
 		props.put("org.omg.CORBA.ORBInitialHost","localhost");
 		props.put("org.omg.CORBA.ORBInitialPort","1234");
-		ORB orb = ORB.init((String[])null,props);
+		this.orb = ORB.init((String[])null,props);
 
 		org.omg.CORBA.Object o = orb.resolve_initial_references("NameService");
-		NamingContextExt context = NamingContextExtHelper.narrow(o);
-		POA root =  POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-
-
-		<#list generatorInterfaces as interface>
-		proxy${interface.simpleName} = new ${interface.simpleName}Impl(javacard);
-		bindObject(proxy${interface.simpleName}, root, context);
-		</#list>
-		
+		contextExt = NamingContextExtHelper.narrow(o);
+		root =  POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+	       
 		root.the_POAManager().activate();
 	}
 
-	private void bindObject(Servant bindObject, POA root, NamingContextExt contextExt)
+	private void bindObject(Servant bindObject)
 			throws ServantAlreadyActive, WrongPolicy, ObjectNotActive, 
 			org.omg.CosNaming.NamingContextPackage.InvalidName, 
 			NotFound, CannotProceed
@@ -118,8 +114,31 @@ public class Server {
 			ClassNotFoundException {
 		CardTerminal cardTerminal  = selectLastTerminal();
 		CardRequest cardRequest = openCardAccess(cardTerminal);
-		//FIXME : Accès concurents sur plusieurs applet
-		selectApplet(selectApplet, cardRequest);
+		selectApplet("${interface.appletID}", cardRequest);
+		<#list generatorInterfaces as interface>
+		proxy${interface.simpleName} = new ${interface.simpleName}Impl(javacard);
+		try{
+			bindObject(proxy${interface.simpleName});
+		} catch (ServantAlreadyActive e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WrongPolicy e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ObjectNotActive e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotFound e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CannotProceed e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		</#list>
 		orb.run();
 	}
     /**
@@ -139,6 +158,7 @@ public class Server {
     		throws OpenCardPropertyLoadingException, CardServiceException, 
     		CardTerminalException, ClassNotFoundException 
     {
+        
         SmartCard smartCard = SmartCard.waitForCard(cardRequest);
         
         if(smartCard==null)
@@ -237,7 +257,6 @@ public class Server {
             Server server = new Server();
             //launch server
             System.out.println("Server Running");
-			server.setSelectApplet("${interface.appletID}");
             server.start();
             //stop server
             server.stop();
@@ -247,20 +266,4 @@ public class Server {
             System.err.println("Please check if orbd is started, try to launch orbd with this commandline : orbd -ORBInitialPort 1234 -ORBInitaHost localhost");
         }
     }
-    
-    /**
-	 * @return Returns the selectApplet.
-	 */
-	public String getSelectApplet() {
-		return selectApplet;
-	}
-
-	/**
-	 * @param selectApplet The selectApplet to set.
-	 */
-	public void setSelectApplet(String selectApplet) {
-		this.selectApplet = selectApplet;
-	}
-    
-    
 }

@@ -39,7 +39,7 @@
 			<param name="idl.file" value="./configuration/fr/umlv/ir3/corba/resources/reference.idl" />
 			<param name="idl.package" value="fr.umlv.ir3.corba.generator" />
 		    <param name="src.path" value="../Applet/src"/>
-			<param name="generated" value="./generated" />
+			<param name="generated" value="../Applet/src" />
 		  </antcall>		
 	</target>
 
