@@ -1,4 +1,4 @@
-package fr.umlv.ir3.corba.calculator.client;
+package fr.umlv.ir3.corba.manager.client;
 
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
@@ -12,12 +12,14 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
+import exo4.AppletManager;
 import fr.umlv.ir3.corba.calculator.AppletCalculator;
 import fr.umlv.ir3.corba.calculator.AppletCalculatorHelper;
 import fr.umlv.ir3.corba.calculator.CardException;
 import fr.umlv.ir3.corba.calculator.InitializationException;
 import fr.umlv.ir3.corba.calculator.InvalidOperator;
 import fr.umlv.ir3.corba.calculator.StackOverFlow;
+import fr.umlv.ir3.corba.manager.AppletManagerHelper;
 
 public class AppletManagerClient {
 	private AppletManager applet;
@@ -46,40 +48,10 @@ public class AppletManagerClient {
 		o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
 		NameComponent [] name = context.to_name(nameObject);
-		applet=AppletManagerHelper.narrow(context.resolve(name));
+		applet=(AppletManager) AppletManagerHelper.narrow(context.resolve(name));
 	}
 	
-	public void clear() throws CardException, InitializationException{
-		applet.clear();
-	}
 	
 	public static void main(String[] args) {
-		try {
-			
-		} catch (InvalidName e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotFound e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CannotProceed e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (StackOverFlow e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CardException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InitializationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidOperator e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
