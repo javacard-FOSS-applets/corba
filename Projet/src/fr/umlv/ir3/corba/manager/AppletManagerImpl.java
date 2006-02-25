@@ -11,18 +11,23 @@ import opencard.core.event.CTListener;
 import opencard.core.event.CardTerminalEvent;
 import opencard.core.event.EventGenerator;
 import opencard.core.service.CardRequest;
-import opencard.core.service.CardServiceException;
 import opencard.core.service.SmartCard;
 import opencard.core.terminal.CardTerminal;
 import opencard.core.terminal.CardTerminalException;
 import opencard.core.terminal.CardTerminalRegistry;
+import opencard.core.terminal.ResponseAPDU;
 import opencard.core.util.HexString;
 
 
 
 /**
- * @author olive
- *
+ * @author Olivier Boitel
+ * @author Laurent Barbisan
+ * @author Denis Guillon
+ * @author Sebastien Lamps
+ * 
+ * this class is a proxy corba which allow to manage an applet on the card 
+ * 
  */
 public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	
@@ -33,7 +38,7 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	private final static Object monitor = "synchronization monitor";
 	private CFlex32CardService loader = null;
 	
-
+	
 	
 	public AppletManagerImpl()throws Exception{
 		init();
@@ -84,63 +89,107 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#load(byte[], int)
+	/**
+	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#load(byte[], int, java.lang.String)
 	 */
-	public void load(byte[] input, int staticsize,String pakgId) throws ManagerException {
-		
-		try {
-			getLoader().createSecureChannel(HexString.parseHexString(auth_enc_), HexString.parseHexString(mac_));
+	public void load(byte[] input, int staticsize, String pakgId) throws ManagerException 
+	{
+		synchronized(monitor){
+			try {
+				
+				getLoader().createSecureChannel(getAuthKey(),getMacKey());
+				this.loader.installLoad(HexString.parseHexString(pakgId),new ByteArrayInputStream(input),staticsize);
+				this.loader.load();
+				
+			}catch (Exception e) {
+				throw new ManagerException("erreur pendant le chargement de l'applet");
+			}
 			
-			
-			getLoader().installLoad(HexString.parseHexString(pakgId), new ByteArrayInputStream(input), staticsize);
-			getLoader().load();
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+	}
+	
+	/** 
+	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#install(int, java.lang.String, java.lang.String)
+	 */
+	public void install(int instance_size, String pakgId, String appId) throws ManagerException {
+		synchronized(monitor){
+			try {
+				getLoader().createSecureChannel(getAuthKey(), getMacKey());
+				getLoader().install(HexString.parseHexString(pakgId), HexString.parseHexString(appId), HexString.parseHexString(appId),
+						instance_size);
+			} catch (Exception e) {
+				throw new ManagerException("erreur pendant l'installation de l'applet");
+			}
+		}
+	}
+	
+	/** 
+	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#delete(byte[])
+	 */
+	public void delete(byte[] aid) throws ManagerException {
+		synchronized(monitor){
+			try {
+				getLoader().createSecureChannel(getAuthKey(), getMacKey());
+				getLoader().deleteApplication(aid);
+			} catch (Exception e1) {
+				throw new ManagerException("erreur pendant la suppression de l'applet");
+			}
 		}
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#install(int, java.lang.String, java.lang.String)
-	 */
-	public void install(int instance_size, String pakgId, String appId) throws ManagerException {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#delete(byte[])
-	 */
-	public void delete(byte[] aid) throws ManagerException {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	/* (non-Javadoc)
+	/**
 	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#status(int)
 	 */
 	public void status(int type) throws ManagerException {
-		// TODO Auto-generated method stub
-		
+		synchronized(monitor){
+			try {
+				getLoader().createSecureChannel(getAuthKey(), getMacKey());
+				
+				ResponseAPDU res = getLoader().status(type);
+				System.out
+				.println("Response status : " + HexString.hexify(res.sw1())
+						+ HexString.hexify(res.sw2()));
+				byte[] data = res.data();
+				if (data == null)
+					return;
+				for (int i = 0; i < data.length; i++) {
+					int len = data[i] & 0xFF;
+					i++;
+					System.out.print("Data: ");
+					for (int j = 0; j < len; j++, i++) {
+						System.out.print(HexString.hexify(data[i]));
+					}
+					System.out.print(" / State: " + HexString.hexify(data[i]));
+					i++;
+					System.out.println(" / Privileges: "
+							+ HexString.hexify(data[i]));
+				}
+			} catch (Exception e) {
+				throw new ManagerException("erreur sur l'appel du status");
+			}
+			
+		}
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see opencard.core.event.CTListener#cardInserted(opencard.core.event.CardTerminalEvent)
 	 */
 	public void cardInserted(CardTerminalEvent arg0) throws CardTerminalException {
-		// TODO Auto-generated method stub
 		
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see opencard.core.event.CTListener#cardRemoved(opencard.core.event.CardTerminalEvent)
 	 */
 	public void cardRemoved(CardTerminalEvent arg0) throws CardTerminalException {
 		synchronized (monitor) {
 			monitor.notifyAll();
 		}	
+	}
+	
+	private void shutdown() throws Exception {
+		SmartCard.shutdown();
 	}
 	
 	private CFlex32CardService getLoader() throws Exception {
@@ -179,4 +228,15 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 		}
 	}
 	
+	private byte[] getAuthKey() {
+		
+		return HexString.parseHexString(auth_enc_);
+		
+	}
+	
+	private byte[] getMacKey() {
+		
+		return HexString.parseHexString(mac_);
+		
+	}
 }
