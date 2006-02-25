@@ -1,4 +1,4 @@
-package fr.umlv.ir3.corba.calculator.server;
+package fr.umlv.ir3.corba.manager.server;
 
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
@@ -23,7 +23,7 @@ import org.omg.PortableServer.POAPackage.ObjectNotActive;
 import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
-import fr.umlv.ir3.corba.calculator.impl.CalculatorImpl;
+import fr.umlv.ir3.corba.manager.AppletManagerImpl;
 
 /**
  * This class provides an implementation of corba server using a distant calculator applet in card terminal 
@@ -32,7 +32,7 @@ import fr.umlv.ir3.corba.calculator.impl.CalculatorImpl;
 
 public class AppletManagerServer{
 	private ORB orb;
-	private AppletManagerImpl applet;
+	private AppletManagerImpl appletManager;
 	
 	/**
 	 * TODO: completer les exceptions
@@ -52,7 +52,7 @@ public class AppletManagerServer{
 	 * @throws OpenCardPropertyLoadingException 
 	 */
 	
-	public AppletManagerServer(String appletId) throws InvalidName, ServantAlreadyActive, WrongPolicy, ObjectNotActive, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed, AdapterInactive, OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException {
+	public AppletManagerServer() throws InvalidName, ServantAlreadyActive, WrongPolicy, ObjectNotActive, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed, AdapterInactive, OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException {
 		ResourceBundle config = PropertyResourceBundle.getBundle("config");
 		String host = config.getString("host");
 		String port = config.getString("port");
@@ -66,12 +66,13 @@ public class AppletManagerServer{
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
 		POA root =  POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 		
-		applet = new AppletManagerImpl();
-		System.out.println("Insert your card ...");
-		calculator.initCardAccess(appletId);
-		System.out.println("Card found");
+		try {
+			appletManager = new AppletManagerImpl();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		
-		byte [] id = root.activate_object(applet);
+		byte [] id = root.activate_object(appletManager);
 		org.omg.CORBA.Object ref = root.id_to_reference(id);
 		
 		NameComponent [] name = context.to_name(nameObject);
@@ -93,7 +94,6 @@ public class AppletManagerServer{
 	 * Stops a calculator applet server instance
 	 */  
 	public void stop() {
-		calculator.closeCardAccess();
 		orb.destroy();     
 	}   
 	
@@ -104,7 +104,7 @@ public class AppletManagerServer{
 	public static void main(String[] args) {
 		try {
 			//initialize server
-			Server server = new Server("A00000000201");
+			AppletManagerServer server = new AppletManagerServer();
 			//launch server
 			System.out.println("Server Running");
 			server.start();
