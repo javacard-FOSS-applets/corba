@@ -1,0 +1,12 @@
+module manager{
+
+	typedef sequence<octet> List;
+	exception ManagerException{string message;};
+
+	interface AppletManager{
+		void load(in List input,in long staticsize,in string pakgId)raises (ManagerException);
+		void delete(in List aid)raises (ManagerException);
+		void install(in long instance_size,in string pakgId,in string appId)raises (ManagerException);
+		void status(in long type)raises (ManagerException);
+	};
+};
