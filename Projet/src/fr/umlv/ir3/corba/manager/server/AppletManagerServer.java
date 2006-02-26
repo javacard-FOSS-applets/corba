@@ -53,14 +53,15 @@ public class AppletManagerServer{
 	 */
 	
 	public AppletManagerServer() throws InvalidName, ServantAlreadyActive, WrongPolicy, ObjectNotActive, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed, AdapterInactive, OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException {
-		ResourceBundle config = PropertyResourceBundle.getBundle("config");
-		String host = config.getString("host");
-		String port = config.getString("port");
-		String nameObject = config.getString("id");
+//		ResourceBundle config = PropertyResourceBundle.getBundle("config");
+//		String host = config.getString("host");
+//		String port = config.getString("port");
+//		String nameObject = config.getString("id");
 		
 		Properties props = new Properties();
-		props.put("org.omg.CORBA.ORBInitialHost",host);
-		props.put("org.omg.CORBA.ORBInitialPort",port);
+		props.put("org.omg.CORBA.ORBInitialHost","localhost");
+		props.put("org.omg.CORBA.ORBInitialPort","1234");
+		this.orb = ORB.init((String[])null,props);
 		orb = ORB.init(new String[1],props);
 		org.omg.CORBA.Object o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
@@ -75,7 +76,7 @@ public class AppletManagerServer{
 		byte [] id = root.activate_object(appletManager);
 		org.omg.CORBA.Object ref = root.id_to_reference(id);
 		
-		NameComponent [] name = context.to_name(nameObject);
+		NameComponent [] name = context.to_name("manager");
 		try {
 			context.bind(name,ref);
 		} catch (AlreadyBound e) {
@@ -94,6 +95,7 @@ public class AppletManagerServer{
 	 * Stops a calculator applet server instance
 	 */  
 	public void stop() {
+		appletManager.closeCardAccess();
 		orb.destroy();     
 	}   
 	

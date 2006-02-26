@@ -1,8 +1,8 @@
 package fr.umlv.ir3.corba.manager.client;
 
 import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+
+import opencard.core.util.HexString;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.ORBPackage.InvalidName;
@@ -11,12 +11,13 @@ import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
-
+import fr.umlv.ir3.corba.manager.AppletManager;
 import fr.umlv.ir3.corba.manager.AppletManagerHelper;
-import fr.umlv.ir3.corba.manager.AppletManagerOperations;
+import fr.umlv.ir3.corba.manager.ManagerException;
+
 
 public class AppletManagerClient {
-	private AppletManagerOperations applet;
+	private AppletManager appletManager;
 	
 	/** Constructor 
 	 * @throws InvalidName 
@@ -26,26 +27,50 @@ public class AppletManagerClient {
 	 * @throws CannotProceed 
 	 * @throws NotFound 
 	 * @throws CannotProceed 
-	 * @throws NotFound */
-	public AppletManagerClient() throws InvalidName, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed  {
-		ResourceBundle config = PropertyResourceBundle.getBundle("config");
-		String host = config.getString("host");
-		String port = config.getString("port");
-		String nameObject = config.getString("id");
+	 * @throws NotFound 
+	 * @throws ManagerException */
+	public AppletManagerClient() throws InvalidName, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed, ManagerException  {
 		
 		Properties props = new Properties();
-		props.put("org.omg.CORBA.ORBInitialHost",host);
-		props.put("org.omg.CORBA.ORBInitialPort",port);
+		props.put("org.omg.CORBA.ORBInitialHost","localhost");
+		props.put("org.omg.CORBA.ORBInitialPort","1234");
 		ORB orb = ORB.init(new String[1],props);
 		
 		org.omg.CORBA.Object o;
 		o = orb.resolve_initial_references("NameService");
 		NamingContextExt context = NamingContextExtHelper.narrow(o);
-		NameComponent [] name = context.to_name(nameObject);
-		applet=(AppletManagerOperations) AppletManagerHelper.narrow(context.resolve(name));
+		NameComponent [] name = context.to_name("manager");
+		appletManager = AppletManagerHelper.narrow(context.resolve(name));
+		
+		String appletId = "A000000002";
+		
+		byte[] applet = HexString.parseHexString(appletId);
+		
+		appletManager.delete(applet);
+		
+		
 	}
 	
 	
 	public static void main(String[] args) {
+		
+		try {		
+			AppletManagerClient client  = new AppletManagerClient();
+		} catch (InvalidName e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotFound e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CannotProceed e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ManagerException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 }
