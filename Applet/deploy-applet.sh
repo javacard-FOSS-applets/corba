@@ -1,11 +1,11 @@
-if [ $# != 4 ]
+if [ $# -lt 4 ]
 then
-echo "usage : <id applet> <class applet> <id package> <class package>"
+echo "usage : <id applet> <class applet> <id package> <class package> [included classes ...]"
 echo "exemple : 01 CalculatorRPNApplet 02 fr.umlv.ir3.corba.calculator.applet"
 exit
 fi
 
-./compile-and-convert-applet.sh $1 $2 $3 $4 
+./compile-and-convert-applet.sh $*
 echo press enter to continue > /dev/stderr
 read key
 
@@ -14,5 +14,3 @@ echo press enter to continue > /dev/stderr
 read key
 
 ./install-applet.sh $1 $2 $3 $4
-echo press enter to continue > /dev/stderr
-read key
