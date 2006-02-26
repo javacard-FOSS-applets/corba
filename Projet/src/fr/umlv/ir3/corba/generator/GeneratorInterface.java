@@ -47,11 +47,11 @@ public class GeneratorInterface {
 	 * 
 	 */
 	private void generateInstructionNumbers(){
-		int increment = 10;
+		int increment = 1;
 		this.instructionsNumber[0] = increment;
 		
 		for (int i = 1; i < this.javaInterface.getDeclaredMethods().length; i++) {
-			increment += 10;
+			increment += 1;
 			this.instructionsNumber[i] = increment; 
 		}
 	}	

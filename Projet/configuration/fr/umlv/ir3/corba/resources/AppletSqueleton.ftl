@@ -17,14 +17,17 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 	 */
 	final static byte ${interface.simpleName}AppletCLA = (byte)${interface.appletCLA};
 	//dataBuffer
-	byte[] dataBuffer;
+	private byte[] dataBuffer;
+	private short index;
 	
 	//Instruction set for ${interface.simpleName}Applet
+	private final static byte GETRESULT = 0x7F;
 	<#list interface.getDeclaredMethods() as method>
 	private final static byte ${method.name?upper_case} = 0x${interface.instructionsNumber[method_index]};
 	</#list>
 	
 	//TODO : déclarer ici les attributs de la classe
+	private static ${interface.simpleName}InterfaceApplet appletInterface;
 	
 	/**
 	 * Constructor for the applet
@@ -34,7 +37,7 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 	 */
 	private ${interface.simpleName}Applet(byte buffer[],short offset,byte length) {
 		
-		//TODO : instancier les attributs de l'applet
+		 appletInterface = new ${interface.simpleName}InterfaceApplet();
 		
 		if (buffer[offset] == (byte)0) {
 			register();
@@ -80,6 +83,9 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
         byte ins = buffer[ISO7816.OFFSET_INS];
         
 		switch (ins) {
+		case GETRESULT :
+			sendRESULT(apdu);
+			break; 
 	<#list interface.getDeclaredMethods() as method>
 		case ${method.name?upper_case} :
 			${method.name}(apdu);
@@ -92,8 +98,79 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 
 	<#list interface.getDeclaredMethods() as method>
 	private void ${method.name}(APDU apdu){
-		//TODO : implémenter la méthode ici
+		byte buffer[] = apdu.getBuffer();
+		index = (short)(ISO7816.OFFSET_CDATA);
+		dataBuffer = new byte[1];
+		<#list method.getParameterTypes() as type>
+		//Arg ${type_index}
+		${type} arg_${type_index} = get${type}(index, buffer);</#list>		
+		<#if method.getReturnType().toString()!="void">
+		${method.returnType} result = appletInterface.${method.name}(<#list method.getParameterTypes() as type>arg_${type_index}</#list>);
+		index=0;
+		set${method.returnType}(index, result);
+		sendRESULTINFO(apdu);
+		<#else>
+		appletInterface.${method.name}(<#list method.getParameterTypes() as type>arg_${type_index}</#list>);
+		</#if>
+		index=0;
 	}
 	</#list>
 	
+	/**
+	* Send the result information about CALL
+	*
+	*/
+	private void sendRESULTINFO(APDU apdu)
+	{
+			ISOException.throwIt((short)(0x6200 + dataBuffer.length));
+	}
+	
+	/**
+	* Send the result information about CALL
+	*
+	*/
+	private void sendRESULT(APDU apdu)
+	{
+		byte buffer[] = apdu.getBuffer();
+
+		short numBytes = apdu.setIncomingAndReceive();
+
+		if (numBytes != (byte)dataBuffer.length) {
+			ISOException.throwIt((short)ISO7816.SW_WRONG_LENGTH);
+		}
+
+		apdu.setOutgoing();
+		apdu.setOutgoingLength(numBytes);
+		
+		for (short index = 0; index < numBytes; index++) 
+			buffer[index] = dataBuffer[index];
+
+		apdu.sendBytes((short)0,(short)numBytes);
+
+		return;
+	}
+	
+	/**
+	* this method retrive a byte in the buffer and increment the index
+	* @param index index in the buffer
+	* @param buffer
+	* @return return the byte
+	*/
+	private byte getbyte(short index, byte[] buffer) {
+		//TODO : Vérifie la longueur
+		index++;
+		return buffer[(short)(index-1)];
+	}
+	
+	/**
+	* this method retrive a byte in the buffer and increment the index
+	* @param index index in the buffer
+	* @param buffer
+	* @return return the byte
+	*/
+	private void setbyte(short index, byte value) {
+		//TODO : Vérifie la longueur
+		dataBuffer[index] = value;
+		index++;
+	}
 }

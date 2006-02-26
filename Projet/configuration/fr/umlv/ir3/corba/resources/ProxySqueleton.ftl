@@ -14,6 +14,7 @@ import opencard.opt.terminal.ISOCommandAPDU;
  * @author CorbaCard generator
  */
 public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
+	
 	//This applet is designed to respond to the following
 	//class of instructions.
 	final static byte ${interface.simpleName}AppletCLA = (byte)${interface.appletCLA};
@@ -21,8 +22,9 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
 	byte[] dataBuffer;
 	
 	//Instruction set for ${interface.simpleName}Applet
+	private final static byte GETRESULT = 0x7F;
 	<#list interface.getDeclaredMethods() as method>
-	private byte ${method.name?upper_case} = 0x${interface.instructionsNumber[method_index]};
+	private final static byte ${method.name?upper_case} = 0x${interface.instructionsNumber[method_index]};
 	</#list>
 	
 	//JavaCard Manager
@@ -43,22 +45,64 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
 	}
     
 	<#list interface.getDeclaredMethods() as method>
+	
 	/**
-	*
-	<#list method.getParameterTypes() as type>* @param ${type} arg_${type_index}</#list>
+	*<#list method.getParameterTypes() as type>
+	* @param ${type} arg_${type_index}</#list>
+	* @return ${method.returnType}
 	*/
-	public void ${method.name}(<#list method.getParameterTypes() as type>${type} arg_${type_index}</#list>)
+	public ${method.returnType} ${method.name}(<#list method.getParameterTypes() as type>${type} arg_${type_index}</#list>)
 	{
-	<#assign conversioncode = methodGenerator.generateConversionTypeCode(method)>
-${conversioncode}
+	<#assign conversioncode = methodGenerator.generateConversionTypeCode(method)>${conversioncode}
 	}
 	</#list>
     
-    private ResponseAPDU sendCommand(byte command, byte[] value) throws CardTerminalException{
-    	return javacard.sendAPDU(new ISOCommandAPDU(${interface.simpleName}AppletCLA,command,(byte)0,(byte)0,value,value.length));
+       //========================================== G E S T I O N S  D E S  T R A M E S===========================================
+    
+	private byte[] sendCommand(byte command, byte[] value) throws CardTerminalException, IllegalAccessException{
+		byte[] buffer=null;
+		int size;
+		
+		ResponseAPDU responseAPDU = javacard.sendAPDU(new ISOCommandAPDU(ReferenceProxyInterfaceAppletCLA,command,(byte)0,(byte)0,value,value.length));
+    	//If the response contains result, then send a GETRESTULT
+    	if(responseAPDU.sw1()==0x62)
+    	{
+    		responseAPDU = javacard.sendAPDU(new ISOCommandAPDU(ReferenceProxyInterfaceAppletCLA,GETRESULT,(byte)0,(byte)0,new byte[responseAPDU.sw2()],responseAPDU.sw2()));
+    	}
+    	if(responseAPDU.sw()!=0x9000)
+    	{
+    		throw new IllegalAccessException("JavaCard return code :" + responseAPDU.sw1() + " " + responseAPDU.sw2());
+    	}
+    	
+    	size = (short) responseAPDU.getLength();
+    	if(size==0)
+    	{
+    		throw new IllegalAccessException("return buffer is null");
+    	}
+    	else
+    	{
+    		buffer= new byte[size];
+    		for(int index = 0;index<buffer.length;index++)
+    		{
+    			buffer[index]= responseAPDU.getBuffer()[index];
+    		}
+    	}
+    	return buffer;
     }
     
-    private ResponseAPDU sendCommand(byte command) throws CardTerminalException{
-    	return javacard.sendAPDU(new ISOCommandAPDU(${interface.simpleName}AppletCLA,command,(byte)0,(byte)0,new byte[0],0));
+    private byte[] sendCommand(byte command) throws CardTerminalException, IllegalAccessException{
+    	return sendCommand(command, new byte[0]);
     }
+    
+    /**
+	* this method retrive a byte in the buffer and increment the index
+	* @param index index in the buffer
+	* @param buffer
+	* @return return the byte
+	*/
+	private byte getbyte(int index, byte[] buffer) {
+		//TODO : Vérifie la longueur
+		index++;
+		return buffer[index-1];
+	}
 }

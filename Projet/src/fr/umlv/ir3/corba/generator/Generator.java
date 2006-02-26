@@ -3,6 +3,7 @@ package fr.umlv.ir3.corba.generator;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import fr.umlv.ir3.corba.generator.squeleton.applet.AppletInterfaceSqueleton;
 import fr.umlv.ir3.corba.generator.squeleton.applet.AppletSqueleton;
 import fr.umlv.ir3.corba.generator.squeleton.proxy.ClientSqueleton;
 import fr.umlv.ir3.corba.generator.squeleton.proxy.ProxySqueleton;
@@ -57,9 +58,11 @@ public class Generator {
 	public void generateAppletStub() throws ClassNotFoundException{
 		parseInterface();
 		AppletSqueleton appletSqueleton = new AppletSqueleton(generatorInterface);
-
+		AppletInterfaceSqueleton appletInterfaceSqueleton = new AppletInterfaceSqueleton(generatorInterface);
+		
 		try {
 			appletSqueleton.generateFile(this.getGeneratedSourcePath());
+			appletInterfaceSqueleton.generateFile(this.getGeneratedSourcePath());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

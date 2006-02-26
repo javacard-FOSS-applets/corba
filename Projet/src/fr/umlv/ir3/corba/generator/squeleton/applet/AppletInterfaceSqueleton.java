@@ -9,13 +9,13 @@ import fr.umlv.ir3.corba.generator.squeleton.proxy.CodeMethodsFactory;
  * @author lbarbisan
  *
  */
-public class AppletSqueleton extends AbstractFreeMarkerSqueleton 
+public class AppletInterfaceSqueleton extends AbstractFreeMarkerSqueleton 
 {
 	
 	/**
 	 * @param squeletonInterface
 	 */
-	public AppletSqueleton(GeneratorInterface squeletonInterface)
+	public AppletInterfaceSqueleton(GeneratorInterface squeletonInterface)
 	{
 		super(squeletonInterface);
 	}
@@ -23,7 +23,7 @@ public class AppletSqueleton extends AbstractFreeMarkerSqueleton
 	@Override
 	public String getName() 
 	{
-		return this.generatorInterface.getClassPrefix() + "Applet";
+		return this.generatorInterface.getClassPrefix() + "InterfaceApplet";
 	}
 	
 	/**
@@ -34,15 +34,6 @@ public class AppletSqueleton extends AbstractFreeMarkerSqueleton
 		return this.generatorInterface.getPackage().getName() + ".applet";
 	}
 	
-	/** (non-Javadoc)
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton#generateInitialize(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateInitialize(StringBuilder code) {
-		super.generateInitialize(code);
-		root.put("methodGenerator", CodeMethodsFactory.createCodeMethodsFactory());
-	}
-
 	/** (non-Javadoc)
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)
 	 */

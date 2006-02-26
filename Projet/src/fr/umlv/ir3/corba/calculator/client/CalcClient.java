@@ -1,8 +1,10 @@
 package fr.umlv.ir3.corba.calculator.client;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.ORBPackage.InvalidName;
@@ -18,6 +20,7 @@ import fr.umlv.ir3.corba.calculator.CardException;
 import fr.umlv.ir3.corba.calculator.InitializationException;
 import fr.umlv.ir3.corba.calculator.InvalidOperator;
 import fr.umlv.ir3.corba.calculator.StackOverFlow;
+import fr.umlv.ir3.corba.resources.Resources;
 
 public class CalcClient {
 	private AppletCalculator calculator;
@@ -32,10 +35,20 @@ public class CalcClient {
 	 * @throws CannotProceed 
 	 * @throws NotFound */
 	public CalcClient() throws InvalidName, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed  {
-		ResourceBundle config = PropertyResourceBundle.getBundle("config");
-		String host = config.getString("host");
-		String port = config.getString("port");
-		String nameObject = config.getString("id");
+		Properties config = new Properties();
+		try {
+			config.load(new FileInputStream(new File(Resources.class.getResource("config.properties").getFile())));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String host = config.getProperty("host");
+		String port = config.getProperty("port");
+		String nameObject = config.getProperty("id");
 		
 		Properties props = new Properties();
 		props.put("org.omg.CORBA.ORBInitialHost",host);

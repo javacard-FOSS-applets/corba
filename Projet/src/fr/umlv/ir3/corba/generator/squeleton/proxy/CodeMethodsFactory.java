@@ -35,18 +35,19 @@ public class CodeMethodsFactory {
 
 	/**
 	 * Return the code corresponding to the specified method
-	 * 
-	 * @param method
-	 *            method to generate code
+	 * @param method method to generate code
 	 * @return code
 	 */
 	public String generateConversionTypeCode(Method method) {
 		StringBuilder beforeAlloc = new StringBuilder();
 		StringBuilder afterAlloc = new StringBuilder();
-
-		beforeAlloc.append("\t\tdataBuffer = new byte[");
+		
+		// Generate headers of method
+		beforeAlloc.append("byte[] buffer=null;\n")
+		.append("\tdataBuffer = new byte[");
 		afterAlloc.append("];\n");
 
+		// Generate code for parameters
 		if (method.getParameterTypes().length != 0) {
 			for (int index = 0; index < method.getParameterTypes().length; index++) {
 				Class klass = method.getParameterTypes()[index];
@@ -54,22 +55,33 @@ public class CodeMethodsFactory {
 			}
 		}
 
+		// Generate code for sending method in APDU
 		beforeAlloc.append(bufferLength).append(afterAlloc).append(
 				"\t\ttry {\n");
 
 		if (bufferLength != 0) {
 
-			beforeAlloc.append("\t\t\tsendCommand("
+			beforeAlloc.append("\t\t\tbuffer = sendCommand("
 					+ method.getName().toUpperCase() + ", dataBuffer);\n");
 		} else {
-			beforeAlloc.append("\t\t\tsendCommand("
+			beforeAlloc.append("\t\t\tbuffer = sendCommand("
 					+ method.getName().toUpperCase() + ");\n");
 		}
 
-		beforeAlloc.append("\t\t} catch (CardTerminalException e) {\n").append(
-				"\t\t\t// TODO Auto-generated catch block\n").append(
-				"\t\t\te.printStackTrace();\n}\n");
+		// Add exception code
+		beforeAlloc.append("\t\t} catch (CardTerminalException e) {\n")
+				.append("\t\t\t// TODO Auto-generated catch block\n")
+				.append("\t\t\te.printStackTrace();\n")
+				.append("\t\t} catch (IllegalAccessException e) {\n")
+				.append("\t\t\t// TODO Auto-generated catch block\n")
+				.append("\t\t\te.printStackTrace();\n\t\t}\n");
 		bufferLength = 0;
+		
+		// Add the return code if needed
+		if(!"void".equals(method.getReturnType().toString()))
+		{
+			beforeAlloc.append("\t\treturn get").append(method.getReturnType().toString()) .append("(0, buffer);");
+		}
 		return beforeAlloc.toString();
 	}
 
@@ -101,11 +113,11 @@ public class CodeMethodsFactory {
 	private String generateSimpleArgument(Class parameter, String rightAffection) {
 		if (parameter == byte.class) {
 			bufferLength++;
-			return "dataBuffer[" + (bufferLength - 1) + "]=" + rightAffection
+			return "\t\tdataBuffer[" + (bufferLength - 1) + "]=" + rightAffection
 					+ ";\n";
 		} else if (parameter == short.class) {
 			bufferLength++;
-			return "dataBuffer[" + (bufferLength - 1) + "]=" + rightAffection
+			return "\t\tdataBuffer[" + (bufferLength - 1) + "]=" + rightAffection
 					+ ";\n";
 		}
 		return "";
