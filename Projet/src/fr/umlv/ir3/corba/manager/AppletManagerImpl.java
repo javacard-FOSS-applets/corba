@@ -136,9 +136,7 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	public void delete(byte[] aid) throws ManagerException {
 		synchronized(monitor){
 			try {
-				System.out.println("test1");
 				getLoader().createSecureChannel(getAuthKey(), getMacKey());
-				System.out.println("test2");
 				getLoader().deleteApplication(aid);
 			} catch (Exception e1) {
 				e1.printStackTrace();

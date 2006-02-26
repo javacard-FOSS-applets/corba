@@ -1,5 +1,9 @@
 package fr.umlv.ir3.corba.manager.client;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 import opencard.core.util.HexString;
@@ -45,9 +49,27 @@ public class AppletManagerClient {
 		String appletId = "A000000002";
 		
 		byte[] applet = HexString.parseHexString(appletId);
+
 		
-		appletManager.delete(applet);
+		File cap = new File("/home/olive/workspace/Applet/classes/fr/umlv/ir3/corba/calculator/applet/javacard/applet.ijc");
+		FileInputStream in;
+		byte[] buf=null;;
 		
+		try {
+			in = new FileInputStream(cap);
+			
+			buf = new byte[(int) cap.length()];
+			in.read(buf);
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		appletManager.load(buf,buf.length,appletId);
+		
+//		appletManager.delete(applet);
 		
 	}
 	
