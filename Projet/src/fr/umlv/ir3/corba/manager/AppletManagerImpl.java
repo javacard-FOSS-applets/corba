@@ -11,12 +11,14 @@ import opencard.core.event.CTListener;
 import opencard.core.event.CardTerminalEvent;
 import opencard.core.event.EventGenerator;
 import opencard.core.service.CardRequest;
+import opencard.core.service.CardServiceException;
 import opencard.core.service.SmartCard;
 import opencard.core.terminal.CardTerminal;
 import opencard.core.terminal.CardTerminalException;
 import opencard.core.terminal.CardTerminalRegistry;
 import opencard.core.terminal.ResponseAPDU;
 import opencard.core.util.HexString;
+import opencard.core.util.OpenCardPropertyLoadingException;
 
 
 
@@ -35,6 +37,11 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	static String mac_ = auth_enc_;
 	
 	private SmartCard sm;
+	
+	private CardTerminal terminal=null;
+	private CardRequest cr = null;
+	private CFlex32CardService javacard;
+	
 	private final static Object monitor = "synchronization monitor";
 	private CFlex32CardService loader = null;
 	
@@ -129,9 +136,12 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 	public void delete(byte[] aid) throws ManagerException {
 		synchronized(monitor){
 			try {
+				System.out.println("test1");
 				getLoader().createSecureChannel(getAuthKey(), getMacKey());
+				System.out.println("test2");
 				getLoader().deleteApplication(aid);
 			} catch (Exception e1) {
+				e1.printStackTrace();
 				throw new ManagerException("erreur pendant la suppression de l'applet");
 			}
 		}
@@ -240,12 +250,93 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
 		
 	}
 
+	public void initCardAccess(String appletId) throws CardTerminalException, CardServiceException, ClassNotFoundException, OpenCardPropertyLoadingException{
+    	//Wait for insert card
+        if(terminal.isCardPresent(0)==false)
+        {
+        	System.out.println("Re-insert/Insert your card ...");
+        	cr = new CardRequest(CardRequest.NEWCARD, terminal, null);	
+        }
+        else
+        {
+        	cr = new CardRequest(CardRequest.ANYCARD, terminal, null);
+        }
+        sm = SmartCard.waitForCard(cr);
+        
+        if(sm==null)
+        {
+        	throw new NullPointerException("Error when waiting for card to become ready");
+        }
 
-	/* (non-Javadoc)
-	 * @see fr.umlv.ir3.corba.manager.AppletManagerOperations#load(byte[], int)
-	 */
-	public void load(byte[] input, int staticsize) throws ManagerException {
-		// TODO Auto-generated method stub
-		
+    	//Test application
+        javacard = (CFlex32CardService) sm.getCardService(CFlex32CardService.class, true);
+        javacard.selectApplication(HexString.parseHexString("A00000000201"));
+        
+    	javacard.allocateChannel();
+
+    	
+    	//Start card service
+        if (!SmartCard.isStarted()) {
+          SmartCard.start();
+        }
+        
+        //DEBUG: List terminal on the computer
+        printDebug(CardTerminalRegistry.getRegistry());
 	}
+    
+    /**
+     * Closes access applet channel
+     */
+    public void closeCardAccess(){
+        javacard.releaseChannel();
+    }
+    
+    private void initTerminal() throws OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException{
+        
+    	//Try to starrt service
+        if (SmartCard.isStarted() == false) {
+          SmartCard.start();
+        }
+        
+    	//List terminal on the computer
+    	CardTerminalRegistry ctr = CardTerminalRegistry.getRegistry();
+            	
+    	for (Enumeration terminals = ctr.getCardTerminals();terminals.hasMoreElements();) {
+          terminal = (CardTerminal) terminals.nextElement(); 
+          //TODO : Trouver une solution pous élégante
+        }
+
+    	if(terminal==null)
+    	{
+    		//TODO : Remonter les exception correctement
+    		throw new NullPointerException("Couldn't not retrieve a card reader");
+    	}
+    }
+    
+    private void printDebug(CardTerminalRegistry ctr ) {
+        for (Enumeration terminals = ctr.getCardTerminals();terminals.hasMoreElements();) {
+              CardTerminal terminal = (CardTerminal) terminals.nextElement(); 
+              int slots = terminal.getSlots();
+              System.err.println("Address: " + terminal.getAddress() + "\n" + "Name:    "
+                        + terminal.getName() + "\n" + "Type:    " + terminal.getType() + "\n"
+                        + "Slots:   " + terminal.getSlots() + "\n");
+              for (int aSlotID = 0; aSlotID < slots; aSlotID++) {
+                  try {
+                      // First print the ID of the slot
+                      System.err.println("Info for slot ID: " + aSlotID);
+                      if (terminal.isCardPresent(aSlotID)) {
+                          System.err.println("card present: yes");
+                          // If there is a card in the slot print the ATR the OCF got form this
+                          // card
+                          System.err.println("ATR: "
+                                  + HexString.hexify(terminal.getCardID(aSlotID).getATR()));
+                          // As we do not have a driver for this card we cannot interpret this ATR
+                      } else
+                          System.err.println("card present: no");
+                  } catch (CardTerminalException e) {
+                      e.printStackTrace();
+                  }
+              }
+        }
+    }
 }
