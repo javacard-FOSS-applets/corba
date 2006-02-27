@@ -47,11 +47,13 @@ public class AppletManagerClient {
 		appletManager = AppletManagerHelper.narrow(context.resolve(name));
 		
 		String appletId = "A000000002";
-		
 		byte[] applet = HexString.parseHexString(appletId);
 
+		String appletInst = "A00000000201";
+		byte[] appletInstb = HexString.parseHexString(appletId);
+
 		
-		File cap = new File("/home/olive/workspace/Applet/classes/fr/umlv/ir3/corba/calculator/applet/javacard/applet.ijc");
+		File cap = new File("/classes/fr/umlv/ir3/corba/calculator/applet/javacard/applet.ijc");
 		FileInputStream in;
 		byte[] buf=null;;
 		
@@ -69,7 +71,8 @@ public class AppletManagerClient {
 		
 		appletManager.load(buf,buf.length,appletId);
 		
-//		appletManager.delete(applet);
+		appletManager.delete(appletInstb);
+		appletManager.delete(applet);
 		
 	}
 	

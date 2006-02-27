@@ -266,10 +266,6 @@ public class AppletManagerImpl extends AppletManagerPOA implements CTListener{
         	throw new NullPointerException("Error when waiting for card to become ready");
         }
 
-    	//Test application
-        javacard = (CFlex32CardService) sm.getCardService(CFlex32CardService.class, true);
-        javacard.selectApplication(HexString.parseHexString("A00000000201"));
-        
     	javacard.allocateChannel();
 
     	

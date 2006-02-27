@@ -53,10 +53,6 @@ public class AppletManagerServer{
 	 */
 	
 	public AppletManagerServer() throws InvalidName, ServantAlreadyActive, WrongPolicy, ObjectNotActive, org.omg.CosNaming.NamingContextPackage.InvalidName, NotFound, CannotProceed, AdapterInactive, OpenCardPropertyLoadingException, CardServiceException, CardTerminalException, ClassNotFoundException {
-//		ResourceBundle config = PropertyResourceBundle.getBundle("config");
-//		String host = config.getString("host");
-//		String port = config.getString("port");
-//		String nameObject = config.getString("id");
 		
 		Properties props = new Properties();
 		props.put("org.omg.CORBA.ORBInitialHost","localhost");
