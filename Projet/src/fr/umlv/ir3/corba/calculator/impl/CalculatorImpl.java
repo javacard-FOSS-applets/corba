@@ -117,9 +117,12 @@ public class CalculatorImpl extends AppletCalculatorPOA{
 	public short result(char operator) throws InvalidOperator, CardException, InitializationException{
       	try {
             //Send APDU trame to applet
-    		ResponseAPDU res = sendCommand(RESULT,(byte)operator);
+      		byte[] bytes = new byte[2];
+      		bytes[0] = (byte) operator;
+      		bytes[1] = 0;
+    		ResponseAPDU res = sendCommand(RESULT,bytes);
     		//TODO: verifier la bonne utilisation du traitement des reponses
-    		return (short)res.getBuffer()[0];
+    		return bytePairToShort(res.getBuffer()[0], res.getBuffer()[1]);
 		} catch (CardTerminalException e) {
 			throw new CardException(e.getMessage());
 		}
@@ -134,7 +137,7 @@ public class CalculatorImpl extends AppletCalculatorPOA{
 	public void addNumber(short number) throws StackOverFlow, CardException, InitializationException {
 		try {
             //Send APDU trame to applet
-			sendCommand(PUSH,(byte)number);
+			sendCommand(PUSH,shortToBytePair(number));
 		} catch (CardTerminalException e) {
 			throw new CardException(e.getMessage());
 		}
@@ -204,13 +207,40 @@ public class CalculatorImpl extends AppletCalculatorPOA{
         }
     }
     
-    private ResponseAPDU sendCommand(byte command, byte value) throws CardTerminalException, InitializationException{
-        byte[] values = new byte[1];
-        values[0] = value;
+    private ResponseAPDU sendCommand(byte command, byte[] values) throws CardTerminalException, InitializationException{
     	return javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,values,values.length));
     }
     
     private ResponseAPDU sendCommand(byte command) throws CardTerminalException, InitializationException{
     	return javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,command,(byte)0,(byte)0,new byte[0],0));
+    }
+    
+	/**
+     * Converts a short into a 2 byte array
+     * 
+     * @param i short to convert
+	 * @return  array of 2 byte from short
+     */
+    public static byte[] shortToBytePair(short i)
+    {
+        byte[] retVal = new byte[2];
+        retVal[0] = (byte)((short)((i & (short)0xFFFF) >> (short)8));
+        retVal[1] = (byte)(i & (short)0x00FF);
+        return retVal;
+    }
+    
+    /**
+     * Converts a byte pair to a short.
+     * 
+     * @param msb most significant byte
+     * @param lsb least significant byte
+     * @return short from array of 2 byte
+     */
+    public static short bytePairToShort(byte msb, byte lsb)
+    {
+        short smsb, slsb;
+        smsb = (short)((msb & (short)0x00FF) << (short)8);
+        slsb = (short)(lsb & (short)0x00FF);
+        return (short) (smsb | slsb);
     }
 }
