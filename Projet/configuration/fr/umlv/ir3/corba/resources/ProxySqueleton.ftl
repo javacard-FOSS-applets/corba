@@ -1,3 +1,4 @@
+<#import "generals.ftl" as tools>
 ${interface.package};
 
 import opencard.cflex.service.CFlex32CardService;
@@ -19,7 +20,8 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
 	//class of instructions.
 	final static byte ${interface.simpleName}AppletCLA = (byte)${interface.appletCLA};
 	//dataBuffer
-	byte[] dataBuffer;
+	private byte[] outBuffer = new byte[255];
+	private short outBufferIndex;
 	
 	//Instruction set for ${interface.simpleName}Applet
 	private final static byte GETRESULT = 0x7F;
@@ -51,19 +53,42 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
 	* @param ${type} arg_${type_index}</#list>
 	* @return ${method.returnType}
 	*/
-	public ${method.returnType} ${method.name}(<#list method.getParameterTypes() as type>${type} arg_${type_index}</#list>)
+	public ${method.returnType} ${method.name}(<#list method.getParameterTypes() as type><@tools.selectArgType type=type index=type_index has_next=type_has_next/></#list>)
 	{
-	<#assign conversioncode = methodGenerator.generateConversionTypeCode(method)>${conversioncode}
+		byte[] buffer=null;
+		outBufferIndex=0;
+		<#list method.getParameterTypes() as type>
+		<@tools.selectSetterType type=type index=type_index/> 
+		</#list>
+		try {
+			buffer = sendCommand(${method.name?upper_case});
+		} catch (CardTerminalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		outBufferIndex=0;
+		<#if method.getReturnType().toString()!="void">
+		return get${method.returnType?cap_first}(buffer);
+		</#if>
 	}
 	</#list>
     
        //========================================== G E S T I O N S  D E S  T R A M E S===========================================
     
-	private byte[] sendCommand(byte command, byte[] value) throws CardTerminalException, IllegalAccessException{
+	private byte[] sendCommand(byte command) throws CardTerminalException, IllegalAccessException{
 		byte[] buffer=null;
 		int size;
+	
+		buffer = new byte[outBufferIndex];
+		for(int index = 0;index <outBufferIndex;index++)
+		{
+			buffer[index] = outBuffer[index];
+		}
 		
-		ResponseAPDU responseAPDU = javacard.sendAPDU(new ISOCommandAPDU(ReferenceProxyInterfaceAppletCLA,command,(byte)0,(byte)0,value,value.length));
+		ResponseAPDU responseAPDU = javacard.sendAPDU(new ISOCommandAPDU(ReferenceProxyInterfaceAppletCLA,command,(byte)0,(byte)0,outBuffer,outBufferIndex));
     	//If the response contains result, then send a GETRESTULT
     	if(responseAPDU.sw1()==0x62)
     	{
@@ -89,20 +114,5 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
     	}
     	return buffer;
     }
-    
-    private byte[] sendCommand(byte command) throws CardTerminalException, IllegalAccessException{
-    	return sendCommand(command, new byte[0]);
-    }
-    
-    /**
-	* this method retrive a byte in the buffer and increment the index
-	* @param index index in the buffer
-	* @param buffer
-	* @return return the byte
-	*/
-	private byte getbyte(int index, byte[] buffer) {
-		//TODO : Vérifie la longueur
-		index++;
-		return buffer[index-1];
-	}
+<@tools.utils/>
 }

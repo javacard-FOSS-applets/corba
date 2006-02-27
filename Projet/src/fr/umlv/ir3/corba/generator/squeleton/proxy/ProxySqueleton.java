@@ -41,14 +41,6 @@ public class ProxySqueleton extends AbstractFreeMarkerSqueleton {
 	public String getPackage() {
 		return generatorInterface.getPackage().getName();
 	}
-	/** (non-Javadoc)
-	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton#generateInitialize(java.lang.StringBuilder)
-	 */
-	@Override
-	protected void generateInitialize(StringBuilder code) {
-		super.generateInitialize(code);
-		root.put("methodGenerator", CodeMethodsFactory.createCodeMethodsFactory());
-	}
 	
 	/**
 	 * @see fr.umlv.ir3.corba.generator.squeleton.AbstractSqueleton#generateMethods(java.lang.StringBuilder)

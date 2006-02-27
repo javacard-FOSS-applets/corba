@@ -1,8 +1,17 @@
 module proxy {
 	interface ReferenceProxyInterface{
+		
+		typedef sequence<octet> list;
+
 		void ma0();
 		void ma1_b1(in octet b1);
+		void ma2_b1b2(in octet b1, in octet b2);
 		octet ma0rb();
 		octet ma1_b1rb(in octet b1);
+		octet ma2_b1b1rb(in octet b1, in octet b2);
+		short ma0rs();
+		short ma1_s1sb(in short s1);
+		short ma2_s1s1sb(in short s1, in short s2);
+		short ma1_l1rs(in list liste);
 	};
 };

@@ -2,7 +2,6 @@ package fr.umlv.ir3.corba.generator.squeleton.applet;
 
 import fr.umlv.ir3.corba.generator.GeneratorInterface;
 import fr.umlv.ir3.corba.generator.squeleton.AbstractFreeMarkerSqueleton;
-import fr.umlv.ir3.corba.generator.squeleton.proxy.CodeMethodsFactory;
 
 
 /**

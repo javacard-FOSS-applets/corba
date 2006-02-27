@@ -1,5 +1,5 @@
+<#import "generals.ftl" as tools>
 ${interface.package}.applet;
-
 
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;
@@ -18,7 +18,7 @@ public class ${interface.simpleName}InterfaceApplet {
 	*
 	<#list method.getParameterTypes() as type>* @param ${type} arg_${type_index}</#list>
 	*/
-	public ${method.returnType} ${method.name}(<#list method.getParameterTypes() as type>${type} arg_${type_index}</#list>)
+	public ${method.returnType} ${method.name}(<#list method.getParameterTypes() as type><@tools.selectArgType type=type index=type_index has_next=type_has_next/></#list>)
 	{	
 		//TODO : implémenter la méthode ici
 		<#if method.getReturnType().toString()!="void">

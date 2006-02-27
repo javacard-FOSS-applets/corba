@@ -1,5 +1,5 @@
+<#import "generals.ftl" as tools>
 ${interface.package}.applet;
-
 
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;
@@ -16,9 +16,10 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 	 * class of instructions.
 	 */
 	final static byte ${interface.simpleName}AppletCLA = (byte)${interface.appletCLA};
-	//dataBuffer
-	private byte[] dataBuffer;
-	private short index;
+	// This buffer represent the data to be send to the proxy
+	private byte[] outBuffer;
+	// Index in the outBuffer
+	private short outBufferIndex;
 	
 	//Instruction set for ${interface.simpleName}Applet
 	private final static byte GETRESULT = 0x7F;
@@ -26,8 +27,8 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 	private final static byte ${method.name?upper_case} = 0x${interface.instructionsNumber[method_index]};
 	</#list>
 	
-	//TODO : déclarer ici les attributs de la classe
 	private static ${interface.simpleName}InterfaceApplet appletInterface;
+	//TODO : déclarer ici les attributs de la classe
 	
 	/**
 	 * Constructor for the applet
@@ -38,6 +39,7 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 	private ${interface.simpleName}Applet(byte buffer[],short offset,byte length) {
 		
 		 appletInterface = new ${interface.simpleName}InterfaceApplet();
+		 outBuffer = new byte[128];
 		
 		if (buffer[offset] == (byte)0) {
 			register();
@@ -49,7 +51,6 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 
 	//  Every applet running JavaCard 2.0 must implement the following
 	//  three functions.
-	
 	/**
 	 *  You create the one instance of your applet here.
 	 */ 
@@ -98,21 +99,26 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 
 	<#list interface.getDeclaredMethods() as method>
 	private void ${method.name}(APDU apdu){
-		byte buffer[] = apdu.getBuffer();
-		index = (short)(ISO7816.OFFSET_CDATA);
-		dataBuffer = new byte[1];
+		//In buffer
+		byte inBuffer[] = apdu.getBuffer();
+		apdu.setIncomingAndReceive();
+		//Set the index to the start of data buffer
+		outBufferIndex = (short)(ISO7816.OFFSET_CDATA);
 		<#list method.getParameterTypes() as type>
-		//Arg ${type_index}
-		${type} arg_${type_index} = get${type}(index, buffer);</#list>		
+		<@tools.selectGetterType type=type index=type_index/>
+		</#list>
 		<#if method.getReturnType().toString()!="void">
-		${method.returnType} result = appletInterface.${method.name}(<#list method.getParameterTypes() as type>arg_${type_index}</#list>);
-		index=0;
-		set${method.returnType}(index, result);
+		//Call the method
+		${method.returnType} result = appletInterface.${method.name}(<#list method.getParameterTypes() as type><@tools.selectCallArgType type=type index=type_index has_next=type_has_next/></#list>);
+		outBufferIndex=0;
+		//Set the return type
+		set${method.returnType?cap_first}(result);
 		sendRESULTINFO(apdu);
 		<#else>
-		appletInterface.${method.name}(<#list method.getParameterTypes() as type>arg_${type_index}</#list>);
+		//Simply call method
+		appletInterface.${method.name}(<#list method.getParameterTypes() as type>arg_${type_index}<#if type_has_next>,</#if></#list>);
 		</#if>
-		index=0;
+		outBufferIndex=0;
 	}
 	</#list>
 	
@@ -122,7 +128,7 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 	*/
 	private void sendRESULTINFO(APDU apdu)
 	{
-			ISOException.throwIt((short)(0x6200 + dataBuffer.length));
+			ISOException.throwIt((short)(0x6200 + outBufferIndex));
 	}
 	
 	/**
@@ -135,7 +141,7 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 
 		short numBytes = apdu.setIncomingAndReceive();
 
-		if (numBytes != (byte)dataBuffer.length) {
+		if (numBytes != outBufferIndex) {
 			ISOException.throwIt((short)ISO7816.SW_WRONG_LENGTH);
 		}
 
@@ -143,34 +149,11 @@ public class ${interface.simpleName}Applet extends javacard.framework.Applet {
 		apdu.setOutgoingLength(numBytes);
 		
 		for (short index = 0; index < numBytes; index++) 
-			buffer[index] = dataBuffer[index];
+			buffer[index] = outBuffer[index];
 
 		apdu.sendBytes((short)0,(short)numBytes);
 
 		return;
 	}
-	
-	/**
-	* this method retrive a byte in the buffer and increment the index
-	* @param index index in the buffer
-	* @param buffer
-	* @return return the byte
-	*/
-	private byte getbyte(short index, byte[] buffer) {
-		//TODO : Vérifie la longueur
-		index++;
-		return buffer[(short)(index-1)];
-	}
-	
-	/**
-	* this method retrive a byte in the buffer and increment the index
-	* @param index index in the buffer
-	* @param buffer
-	* @return return the byte
-	*/
-	private void setbyte(short index, byte value) {
-		//TODO : Vérifie la longueur
-		dataBuffer[index] = value;
-		index++;
-	}
+<@tools.utils/>
 }
