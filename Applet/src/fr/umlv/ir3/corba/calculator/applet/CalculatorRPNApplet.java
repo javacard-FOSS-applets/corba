@@ -56,13 +56,8 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 
 	//  Declare your instance variables here
 	private final static short BUFFER_SIZE = (short) 0x40;
+	private Stack stack;
 
-	//  This buffer contains the string data on the card
-	private short stackBuffer[];	
-	
-	// Cursor for stack
-	private short cursor = 0;
-	
 	/**
 	 * Constructor for the applet
 	 * @param buffer buffer
@@ -71,7 +66,7 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 	 */
 	private CalculatorRPNApplet(byte buffer[],short offset,byte length) {
 		
-		stackBuffer = new short[BUFFER_SIZE];
+		stack= new Stack(BUFFER_SIZE);
 		
 		if (buffer[offset] == (byte)0) {
 			register();
@@ -140,8 +135,7 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 	 * reset the stack
 	 */
 	private void clear() {
-		//FIXME: renvoyé une comande de success
-		cursor=0;
+		stack.clear();
 	}
 
 	/**
@@ -155,11 +149,10 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 
 		byte numBytes = (byte)(apdu.setIncomingAndReceive());
 		
-		if (numBytes != (byte)1) {
+		if (numBytes != (byte)2) {
 			ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
 		}	
-		
-		pushStack((short)buffer[(byte)(ISO7816.OFFSET_CDATA)]);
+		stack.pushStack(bytePairToShort(buffer[(byte)(ISO7816.OFFSET_CDATA)], buffer[(byte)((ISO7816.OFFSET_CDATA)+1)]));
 	}
 
 	/**
@@ -179,11 +172,14 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 		}
 
 		apdu.setOutgoing();
-		apdu.setOutgoingLength((short)1);
+		apdu.setOutgoingLength((short)2);
 		 
-		buffer[0]=(byte)popStack();
-
-		apdu.sendBytes((short)0,(short)1);
+		byte[] stackBuffer=shortToBytePair(stack.popStack());
+		
+		buffer[0] = stackBuffer[0];
+		buffer[1] = stackBuffer[1];
+		
+		apdu.sendBytes((short)0,(short)2);
 
 		return;
 	}
@@ -202,26 +198,29 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 
 		byte numBytes = (byte)(apdu.setIncomingAndReceive());
 		
-		if (numBytes != (byte)1) {
+		if (numBytes != (byte)2) {
 			ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
 		}	
 		
 		short left;
 		short right;
 		
-		left=popStack();
-		right=popStack();
+		left=stack.popStack();
+		right=stack.popStack();
 		
 		short result = calculate(buffer[(byte)(ISO7816.OFFSET_CDATA)],	left, right);
 		
-		pushStack(result);
+		stack.pushStack(result);
 	
 		apdu.setOutgoing();
-		apdu.setOutgoingLength((short)1);
+		apdu.setOutgoingLength((short)2);
 		 
-		buffer[0]=(byte)result;
-
-		apdu.sendBytes((short)0,(short)1);
+		byte[] stackBuffer=shortToBytePair(result);
+		
+		buffer[0] = stackBuffer[0];
+		buffer[1] = stackBuffer[1];
+		
+		apdu.sendBytes((short)0,(short)2);
 
 		return;
 		
@@ -263,68 +262,34 @@ public class CalculatorRPNApplet extends javacard.framework.Applet {
 				result=0;
 		}
 		return result;
-		
-				
 	}
 	
 	/**
-	 * Push on the top of the stack the new number
-	 * @param number number to put
-	 * @throws SW_FILE_FULL if an overflow occurs
-	 */
-	private void pushStack(short number)
-	{
-		if(isFullStack()==false)
-		{
-			stackBuffer[(short)cursor++]=number;
-		}
-		else
-		{
-			ISOException.throwIt(ISO7816.SW_FILE_FULL);
-		}
-	}
-	
-	/**
-	 * Pop form the top of th stack the current number
-	 * @return return the number
-	 * @throws SW_FILE_FULL if an underflow occurs
-	 */
-	private short popStack()
-	{
-		if(isEmptyStack()==false)
-		{
-			return stackBuffer[(short)--cursor];
-		}
-		ISOException.throwIt(ISO7816.SW_FILE_FULL);
-		return 0;
-	}
-
-	/**
-	 * 
-	 * @return true if the stack is empty,else false
-	 */
-	private boolean isEmptyStack()
-	{
-		if(cursor<=(short)0)
-		{
-			cursor=(short)0;
-			return true;
-		}
-		return false;
-			
-	}
-
-	/**
-	 *
-	 * @return return true, if the stack is full, false else
-	 */
-	private boolean isFullStack()
-	{
-		if(cursor>=(BUFFER_SIZE-1))
-		{
-			cursor=BUFFER_SIZE-1;
-			return true;
-		}
-		return false;
-	}
+     * Converts a short into a 2 byte array
+     * 
+     * @param i short to convert
+	 * @return  array of 2 byte from short
+     */
+    public static byte[] shortToBytePair(short i)
+    {
+        byte[] retVal = new byte[2];
+        retVal[0] = (byte)((short)((i & (short)0xFFFF) >> (short)8));
+        retVal[1] = (byte)(i & (short)0x00FF);
+        return retVal;
+    }
+    
+    /**
+     * Converts a byte pair to a short.
+     * 
+     * @param msb most significant byte
+     * @param lsb least significant byte
+     * @return short from array of 2 byte
+     */
+    public static short bytePairToShort(byte msb, byte lsb)
+    {
+        short smsb, slsb;
+        smsb = (short)((msb & (short)0x00FF) << (short)8);
+        slsb = (short)(lsb & (short)0x00FF);
+        return (short) (smsb | slsb);
+    }
 }

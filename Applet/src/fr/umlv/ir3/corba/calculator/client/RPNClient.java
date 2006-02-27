@@ -6,7 +6,10 @@ package fr.umlv.ir3.corba.calculator.client;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
+import com.sun.corba.se.impl.logging.UtilSystemException;
+
 import opencard.cflex.service.CFlex32CardService;
+import opencard.cflex.util.Util;
 import opencard.core.service.CardRequest;
 import opencard.core.service.CardServiceException;
 import opencard.core.service.SmartCard;
@@ -100,22 +103,27 @@ public static void main(String[] args) throws CardTerminalException, OpenCardPro
 
 		ResponseAPDU res;
 		//TODO : faire un client plus poussé
-		byte[] number = new byte[1];
-		number[0] = (byte)((short)2);
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
-		number[0] = (byte)((short)3);
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
-		number[0] = (byte)((short)2);
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
-		number[0] = (byte)((short)3);
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,1));
+		byte[] number;
+		number = Util.ShortToBytePair((short)2) ;
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,2));
+		number = Util.ShortToBytePair((short)4) ;
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,2));
+		number = Util.ShortToBytePair((short)6) ;
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,2));
+		number = Util.ShortToBytePair((short)1) ;
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,PUSH,(byte)0,(byte)0,number,2));
+		
+		number = new byte[2];
 		number[0] = (byte)('+');
 		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,number,1));
 		number[0] = (byte)('+');
 		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,number,1));
 		number[0] = (byte)('+');
-		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,number,1));
-      	System.out.println("Result : " + (short)res.getBuffer()[0]);
+		number[1] = 0;
+		res = javacard.sendAPDU(new ISOCommandAPDU(CalculatorApplet_CLA,RESULT,(byte)0,(byte)0,number,2));
+      	
+		System.out.println("Result : " + Util.BytePairToShort(res.getBuffer()[0], res.getBuffer()[1]));
+		
     } finally {
       javacard.releaseChannel();
     }
