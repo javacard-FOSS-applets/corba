@@ -88,7 +88,7 @@ public class ${interface.simpleName}Impl extends ${interface.simpleName}POA{
 			buffer[index] = outBuffer[index];
 		}
 		
-		ResponseAPDU responseAPDU = javacard.sendAPDU(new ISOCommandAPDU(ReferenceProxyInterfaceAppletCLA,command,(byte)0,(byte)0,outBuffer,outBufferIndex));
+		ResponseAPDU responseAPDU = javacard.sendAPDU(new ISOCommandAPDU(ReferenceProxyInterfaceAppletCLA,command,(byte)0,(byte)0,buffer,outBufferIndex));
     	//If the response contains result, then send a GETRESTULT
     	if(responseAPDU.sw1()==0x62)
     	{
